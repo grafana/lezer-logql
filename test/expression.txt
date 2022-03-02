@@ -1,0 +1,222 @@
+# Simple log query
+
+{job="loki"}
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier,Eq, String))))))
+
+# Simple log query with back-ticks
+
+{job=`loki`}
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier,Eq, String))))))
+
+# Simple log query with regex matcher
+
+{name =~ "mysql.+"}
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Re, String))))))
+
+# Log query with regex matcher and equal matcher
+
+{name =~ "mysql.+", job=`loki`}
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Re, String), Comma, Matcher(Identifier, Eq, String))))))
+
+# Log query with regex matcher and back-ticks
+
+{name !~ `mysql-\d+`}
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Nre, String))))))
+
+# Log query with 2 label-value pairs
+
+{job="loki", instance="loki"}
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Comma, Matcher(Identifier, Eq, String))))))
+
+# Log query with 2 label-value pairs and back-ticks
+
+{job="loki", instance=`loki`}
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Comma, Matcher(Identifier, Eq, String))))))
+
+
+# Log query with 2 label-value pairs and no space
+
+{job="loki",instance="loki"}
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Comma, Matcher(Identifier, Eq, String))))))
+
+# Log query with pipe exact filter expression
+
+{job="loki"} |= "hello"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier,Eq,String))),PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact),String)))))))
+
+# Log query with pipe exact line filter expression and back-ticks
+
+{job="loki"} |= `hello`
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier,Eq,String))),PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact),String)))))))
+
+# Log query with pipe match line filter
+
+{job="loki"} |~ `error=\w+`
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier,Eq,String))),PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeMatch),String)))))))
+
+# Log query with regex not equal line filter
+
+{job="loki"} !~ "hello"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier,Eq,String))),PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(Nre),String)))))))
+
+# Log query with regex not equal line filter 
+
+{job="loki"} !~ "hello"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier,Eq,String))),PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(Nre),String)))))))
+
+# Log query with multiple line filters
+
+{job="mysql"} |= "error" !~ "test"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String), LineFilter(Filter(Nre), String)))))))
+
+
+# Log query with logfmt parser
+
+{job="loki"} | logfmt
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))))))
+
+# Log query with regexp parser
+
+{job="loki"} | regexp "regexp"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, LabelParser(Regexp,String))))))
+
+# Complex log query with complex regexp parser
+
+{job="mysql"} | regexp "(?P<method>\\w+) (?P<path>[\\w|/]+) \\((?P<status>\\d+?)\\) (?P<duration>.*)"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, LabelParser(Regexp, String))))))
+
+# Log query with regexp parser without string
+
+{job="loki"} | regexp
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, LabelParser(Regexp,⚠))))))
+
+# Log query with line format
+
+{job="loki"} | line_format "{{.status_code}}"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, LineFormatExpr(LineFormat, String))))))
+
+# Complex log query with line format
+
+{job="mysql"} |= "error" | json | line_format "{{.err}}"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LabelParser(Json))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))))))
+
+# Complex log query with line format and error filtering
+
+{job="mysql"} | json | line_format "{{.message}}" |= "error"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Json))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))), PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))))))
+
+# Log query with complex line format
+
+{container="frontend"} | logfmt | line_format "{{.ip}} {{.status}} {{div .duration 1000}}"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))))))
+
+# Log query with multiple label formats
+
+{container="frontend"} | logfmt | label_format foo=bar | label_format foo="new", bar=`baz`
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFormatExpr(LabelFormat, LabelsFormat(LabelFormatMatcher(Identifier, Eq, Identifier))))), PipelineStage(Pipe, LabelFormatExpr(LabelFormat, LabelsFormat(LabelsFormat(LabelFormatMatcher(Identifier, Eq, String)), Comma, LabelFormatMatcher(Identifier, Eq, String))))))))
+
+# Log query with duration and bytes
+
+{job="mysql"} | logfmt | duration > 1m and bytes_consumed > 20MB
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(Identifier, Gtr, Duration))), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Gtr, Bytes)))))))))
+
+# Complex log query with duration and bytes
+
+{job="mysql"} | logfmt | duration >= 20ms or (method="GET" and size <= 20KB)
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(Identifier, Gte, Duration))), Or, LabelFilter(LabelFilter(LabelFilter(Matcher(Identifier, Eq, String)), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Lte, Bytes)))))))))))
+
+# Complex log query with duration and bytes
+
+{job="mysql"} | logfmt | duration >= 20ms or (method="GET" and size <= 20KB)
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(Identifier, Gte, Duration))), Or, LabelFilter(LabelFilter(LabelFilter(Matcher(Identifier, Eq, String)), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Lte, Bytes)))))))))))
+
+# Complex log query with parsing, filtering, label formatting and line formatting
+
+{cluster="ops-tools1", name="querier", namespace="loki-dev"}
+  |= "metrics.go" != "loki-canary"
+  | logfmt
+  | query != ""
+  | label_format query="{{ Replace .query \"\\n\" \"\" -1 }}"
+  | line_format "{{ .ts}}\t{{.duration}}\ttraceID = {{.traceID}}\t{{ printf \"%-100.100s\" .query }} "
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Comma, Matcher(Identifier, Eq, String)), Comma, Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String), LineFilter(Filter(Neq), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(Matcher(Identifier, Neq, String)))), PipelineStage(Pipe, LabelFormatExpr(LabelFormat, LabelsFormat(LabelFormatMatcher(Identifier, Eq, String))))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))))))

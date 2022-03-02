@@ -1,0 +1,252 @@
+@top LogQL { Expr }
+
+@precedence {
+  eql @left,
+  and @left,
+  or @left
+}
+
+Expr {
+  LogExpr
+}
+
+LogExpr {
+  Selector |
+  Selector PipelineExpr |
+  "(" LogExpr ")"
+}
+
+Selector {
+  "{" Matchers "}" |
+  "{" Matchers Comma Matchers"}"
+}
+
+PipelineExpr {
+  PipelineStage |
+  PipelineExpr PipelineStage
+}
+
+Matchers {
+  Matcher |
+  Matcher !and Comma Matcher
+}
+
+PipelineStage {
+  LineFilters | 
+  Pipe LabelParser |
+  Pipe JsonExpressionParser |
+  Pipe LabelFilter |
+  Pipe LineFormatExpr |
+  Pipe LabelFormatExpr
+}
+
+Matcher {
+  Identifier !eql Eq String |
+  Identifier !eql Neq String |
+  Identifier !eql Re String |
+  Identifier !eql Nre String
+}
+
+LineFilters {
+  LineFilter | 
+  LineFilter LineFilter
+}
+
+LineFilter {
+  Filter String | 
+  Filter FilterOp "(" String ")"
+}
+
+Filter {
+  !eql PipeExact |
+  !eql PipeMatch |
+  !eql Nre |
+  !eql Neq
+}
+
+FilterOp {
+  Ip
+}
+
+LabelParser {
+  Json |
+  Logfmt |
+  Regexp String |
+  Unpack |
+  Pattern String
+}
+
+JsonExpressionParser {
+  Json JsonExpressionList
+}
+
+LabelFilter {
+  Matcher |
+  IpLabelFilter |
+  UnitFilter |
+  NumberFilter |
+  "(" LabelFilter ")" |
+  LabelFilter !and And LabelFilter |
+  LabelFilter !and Comma LabelFilter |
+  LabelFilter !or Or LabelFilter
+}
+
+LineFormatExpr {
+  LineFormat String
+}
+
+LabelFormatExpr {
+  LabelFormat LabelsFormat
+}
+
+JsonExpressionList {
+  JsonExpression |
+  JsonExpression Comma JsonExpression
+}
+
+IpLabelFilter {
+  Identifier Eq Ip "(" String ")" |
+  Identifier Neq Ip "(" String ")"
+}
+
+UnitFilter {
+  DurationFilter |
+  BytesFilter
+}
+
+NumberFilter {
+  Identifier !eql Gtr Number |
+  Identifier !eql Gte Number |
+  Identifier !eql Lss Number |
+  Identifier !eql Lte Number |
+  Identifier !eql Neq Number |
+  Identifier !eql Eq Number |
+  Identifier !eql Eql Number
+}
+
+LabelsFormat {
+  LabelFormatMatcher |
+  LabelsFormat Comma LabelFormatMatcher
+}
+
+LabelFormatMatcher {
+  Identifier !eql Eq Identifier |
+  Identifier !eql Eq String
+}
+
+JsonExpression {
+  Identifier !eql Eq String
+}
+
+DurationFilter {
+  Identifier !eql Gtr Duration |
+  Identifier !eql Gte Duration |
+  Identifier !eql Lss Duration |
+  Identifier !eql Lte Duration |
+  Identifier !eql Neq Duration |
+  Identifier !eql Eq Duration |
+  Identifier !eql Eql Duration
+}
+
+BytesFilter {
+  Identifier !eql Gtr Bytes |
+  Identifier !eql Gte Bytes |
+  Identifier !eql Lss Bytes |
+  Identifier !eql Lte Bytes |
+  Identifier !eql Neq Bytes |
+  Identifier !eql Eq Bytes |
+  Identifier !eql Eql Bytes
+}
+
+@skip { whitespace | LineComment }
+
+@tokens {
+  whitespace { std.whitespace+ }
+  LineComment { "#" ![\n]* }
+
+  String { // TODO: This is for JS, make this work for LogQL.
+    '"' (![\\\n"] | "\\" _)* '"'? |
+    "'" (![\\\n'] | "\\" _)* "'"? |
+    "`" ![`]* "`"
+  }
+  Number {
+    (std.digit+ ("." std.digit*)? | "." std.digit+) (("e" | "E") ("+" | "-")? std.digit+)? |
+    "0x" (std.digit | $[a-fA-F])+
+  }
+
+  Identifier { 
+    (std.asciiLetter | "_" | ":") (std.asciiLetter | std.digit | "_" | ":" )* 
+  }
+  
+  Duration {
+    // Each line below is just the same regex repeated over and over, but each time with one of the units made non-optional,
+    // to ensure that at least one <number>+<unit> pair is provided and an empty string is not recognized as a valid duration.
+    ( ( std.digit+ "y" ) ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
+    ( ( std.digit+ "y" )? ( std.digit+ "w" ) ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
+    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" ) ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
+    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" ) ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
+    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" ) ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
+    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" ) ( std.digit+ "ms" )? ) |
+    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" ) )
+  }
+
+  @precedence { Duration, Bytes, Number }
+
+
+  Bytes {
+    ( std.digit+ "b" ) |
+    ( std.digit+ "kib" ) |
+    ( std.digit+ "Kib" ) |
+    ( std.digit+ "kb" ) |
+    ( std.digit+ "KB" ) |
+    ( std.digit+ "mib" ) |
+    ( std.digit+ "Mib" ) |
+    ( std.digit+ "mb" ) |
+    ( std.digit+ "MB" ) |
+    ( std.digit+ "gib" ) |
+    ( std.digit+ "Gib" ) |
+    ( std.digit+ "gb" ) |
+    ( std.digit+ "GB" ) |
+    ( std.digit+ "tib" ) |
+    ( std.digit+ "Tib" ) |
+    ( std.digit+ "tb" ) |
+    ( std.digit+ "TB" ) |
+    ( std.digit+ "pib" ) |
+    ( std.digit+ "Pib" ) |
+    ( std.digit+ "pb" ) |
+    ( std.digit+ "PB" ) |
+    ( std.digit+ "eib" ) |
+    ( std.digit+ "Eib" ) |
+    ( std.digit+ "eb" ) |
+    ( std.digit+ "EB" ) 
+  }
+
+  Comma { "," }
+
+  // Operator
+  Or   { "or" }
+  And  { "and" }
+  Eq   { "=" }
+  Neq  { "!=" }
+  Re   { "=~" }
+  Nre  { "!~" }
+  Pipe { "|" }
+  Lte  { "<=" }
+  Lss  { "<" }
+  Gte  { ">=" }
+  Gtr  { ">" }
+  Eql  { "==" }
+  PipeExact { "|=" }
+  PipeMatch { "|~" }
+}
+
+@external specialize {Identifier} specializeIdentifier from "./tokens" {
+  Json,
+  Logfmt,
+  Unpack,
+  Pattern,
+  Regexp,
+  Ip,
+  LabelFormat,
+  LineFormat
+}
