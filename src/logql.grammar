@@ -253,6 +253,7 @@ LogRangeExpr {
   Selector Range PipelineExpr |
   Selector Range OffsetExpr PipelineExpr |
   Selector Range PipelineExpr UnwrapExpr |
+  Selector PipelineExpr UnwrapExpr Range |
   Selector Range OffsetExpr PipelineExpr UnwrapExpr |
   "(" LogRangeExpr ")"
 }
@@ -269,6 +270,7 @@ VectorOp {
   Topk
 }
 
+
 Grouping {
   By "(" Labels ")" |
   Without "(" Labels ")" |
@@ -277,15 +279,36 @@ Grouping {
 }
 
 BinOpModifier {
-  BoolModifier |
-  OnOrIgnoringModifier |
-  OnOrIgnoringModifier GroupLeft |
-  OnOrIgnoringModifier GroupLeft !mul "(" ")" |
-  OnOrIgnoringModifier GroupLeft !mul "(" Labels ")" |
-  OnOrIgnoringModifier GroupRight |
-  OnOrIgnoringModifier GroupRight !mul "(" ")" |
-  OnOrIgnoringModifier GroupRight !mul "(" Labels ")"
+  Bool?
+  (
+    OnOrIgnoringModifier
+    (
+      (GroupLeft | GroupRight)
+      (!mul GroupingLabels)? // TODO: Is the "!mul" here correct? Inserted it to resolve a shift/reduce conflict because we always want to count opening parenthesis after this to be counted toward this modifier, not toward a next sub-expression.
+    )?
+  )?
 }
+
+OnOrIgnoringModifier {
+  Ignoring GroupingLabels |
+  On GroupingLabels
+}
+
+GroupingLabels {
+  "(" GroupingLabelList ")" |
+  "(" GroupingLabelList "," ")" |
+  "(" ")"
+}
+
+GroupingLabelList {
+  GroupingLabelList "," GroupingLabel |
+  GroupingLabel
+}
+
+GroupingLabel {
+  LabelName
+}
+
 
 OffsetExpr {
   Offset Duration
@@ -304,17 +327,6 @@ UnwrapExpr {
 Labels {
   Identifier |
   Labels Comma Identifier
-}
-
-BoolModifier {
-  Bool
-}
-
-OnOrIgnoringModifier {
-  BoolModifier On "(" Labels ")" |
-  BoolModifier On "(" ")" |
-  BoolModifier Ignoring "(" Labels ")" |
-  BoolModifier Ignoring "(" ")"
 }
 
 ConvOp {
@@ -344,6 +356,8 @@ ConvOp {
   Identifier { 
     (std.asciiLetter | "_" | ":") (std.asciiLetter | std.digit | "_" | ":" )* 
   }
+
+    LabelName { (std.asciiLetter | "_") (std.asciiLetter | std.digit | "_")* }
   
   Duration {
     // Each line below is just the same regex repeated over and over, but each time with one of the units made non-optional,

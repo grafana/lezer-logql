@@ -220,3 +220,77 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 ==>
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Comma, Matcher(Identifier, Eq, String)), Comma, Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String), LineFilter(Filter(Neq), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(Matcher(Identifier, Neq, String)))), PipelineStage(Pipe, LabelFormatExpr(LabelFormat, LabelsFormat(LabelFormatMatcher(Identifier, Eq, String))))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))))))
+
+# Numeric literals
+
+0.123e3
+
+==>
+
+LogQL(Expr(MetricExpr(LiteralExpr(Number))))
+
+# Count over time query
+
+count_over_time({job="mysql"}[5m])
+
+==>
+
+LogQL(Expr(MetricExpr(RangeAggregationExpr(RangeOp(CountOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Range(Duration))))))
+
+# Complex aggregation query
+
+sum by (host) (rate({job="mysql"} |= "error" != "timeout" | json | duration > 10s [1m]))
+
+==>
+
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), Grouping(By, Labels(Identifier)), MetricExpr(RangeAggregationExpr(RangeOp(Rate), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String), LineFilter(Filter(Neq), String)))), PipelineStage(Pipe, LabelParser(Json))), PipelineStage(Pipe, LabelFilter(UnitFilter(DurationFilter(DurationConv, Gtr, Duration))))), Range(Duration))))))))
+
+# Vector aggregation query topk
+
+topk(10,sum(rate({region="us-east1"}[5m])) by (name))
+
+==>
+
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Topk), Number, Comma, MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggregationExpr(RangeOp(Rate), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Range(Duration)))), Grouping(By, Labels(Identifier))))))))
+
+# Vector aggregation query sum
+
+sum(count_over_time({job="mysql"}[5m])) by (level)
+
+==>
+
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggregationExpr(RangeOp(CountOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Range(Duration)))), Grouping(By, Labels(Identifier))))))
+
+# Vector aggregation query avg
+
+avg(rate(({job="nginx"} |= "GET" | json | path="/home")[10s])) by (region)
+
+==>
+
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Avg), MetricExpr(RangeAggregationExpr(RangeOp(Rate), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LabelParser(Json))), PipelineStage(Pipe, LabelFilter(Matcher(Identifier, Eq, String)))), Range(Duration)))), Grouping(By, Labels(Identifier))))))
+
+# Sum by query with unwrap
+
+sum by (org_id) (
+  sum_over_time(
+  {cluster="ops-tools1",container="loki-dev"}
+      |= "metrics.go"
+      | logfmt
+      | unwrap bytes_processed [1m])
+    )
+
+==>
+
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), Grouping(By, Labels(Identifier)), MetricExpr(RangeAggregationExpr(RangeOp(SumOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Comma, Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), UnwrapExpr(Pipe, Unwrap, Identifier), Range(Duration))))))))
+
+# Quantile over time by query with unwrap
+
+quantile_over_time(0.99,
+  {cluster="ops-tools1",container="ingress-nginx"}
+    | json
+    | __error__ = ""
+    | unwrap request_time [1m]) by (path)
+
+==>
+
+ LogQL(Expr(MetricExpr(RangeAggregationExpr(RangeOp(QuantileOverTime), Number, Comma, LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Comma, Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Json))), PipelineStage(Pipe, LabelFilter(Matcher(Identifier, Eq, String)))), UnwrapExpr(Pipe, Unwrap, Identifier), Range(Duration)), Grouping(By, Labels(Identifier))))))
