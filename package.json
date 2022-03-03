@@ -1,5 +1,5 @@
 {
-  "name": "logql-lezer",
+  "name": "lezer-logql",
   "version": "0.0.1",
   "description": "LogQL lezer grammar",
   "main": "index.cjs",
