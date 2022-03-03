@@ -190,7 +190,7 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 
 ==>
 
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(Identifier, Gtr, Duration))), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Gtr, Bytes)))))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(DurationConv, Gtr, Duration))), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Gtr, Bytes)))))))))
 
 # Complex log query with duration and bytes
 
@@ -198,7 +198,7 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 
 ==>
 
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(Identifier, Gte, Duration))), Or, LabelFilter(LabelFilter(LabelFilter(Matcher(Identifier, Eq, String)), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Lte, Bytes)))))))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(DurationConv, Gte, Duration))), Or, LabelFilter(LabelFilter(LabelFilter(Matcher(Identifier, Eq, String)), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Lte, Bytes)))))))))))
 
 # Complex log query with duration and bytes
 
@@ -206,7 +206,7 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 
 ==>
 
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(Identifier, Gte, Duration))), Or, LabelFilter(LabelFilter(LabelFilter(Matcher(Identifier, Eq, String)), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Lte, Bytes)))))))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(DurationConv, Gte, Duration))), Or, LabelFilter(LabelFilter(LabelFilter(Matcher(Identifier, Eq, String)), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Lte, Bytes)))))))))))
 
 # Complex log query with parsing, filtering, label formatting and line formatting
 

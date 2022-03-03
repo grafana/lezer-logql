@@ -1,13 +1,17 @@
 @top LogQL { Expr }
 
 @precedence {
+  add @left,
   eql @left,
   and @left,
-  or @left
+  or @left,
+  mul @left,
+  pow @right
 }
 
 Expr {
-  LogExpr
+  LogExpr |
+  MetricExpr
 }
 
 LogExpr {
@@ -96,12 +100,12 @@ LineFormatExpr {
 }
 
 LabelFormatExpr {
-  LabelFormat LabelsFormat
+  LabelFormat !and LabelsFormat
 }
 
 JsonExpressionList {
   JsonExpression |
-  JsonExpression Comma JsonExpression
+  JsonExpression !and Comma JsonExpression
 }
 
 IpLabelFilter {
@@ -139,13 +143,13 @@ JsonExpression {
 }
 
 DurationFilter {
-  Identifier !eql Gtr Duration |
-  Identifier !eql Gte Duration |
-  Identifier !eql Lss Duration |
-  Identifier !eql Lte Duration |
-  Identifier !eql Neq Duration |
-  Identifier !eql Eq Duration |
-  Identifier !eql Eql Duration
+  DurationConv !eql Gtr Duration |
+  DurationConv !eql Gte Duration |
+  DurationConv !eql Lss Duration |
+  DurationConv !eql Lte Duration |
+  DurationConv !eql Neq Duration |
+  DurationConv !eql Eq Duration |
+  DurationConv !eql Eql Duration
 }
 
 BytesFilter {
@@ -158,6 +162,168 @@ BytesFilter {
   Identifier !eql Eql Bytes
 }
 
+
+MetricExpr {
+  RangeAggregationExpr |
+  VectorAggregationExpr |
+  BinOpExpr |
+  LiteralExpr |
+  LabelReplaceExpr |
+  "(" MetricExpr ")"
+}
+
+RangeAggregationExpr {
+  RangeOp "(" LogRangeExpr ")" |
+  RangeOp "(" Number Comma LogRangeExpr ")" |
+  RangeOp "(" LogRangeExpr ")" Grouping |
+  RangeOp "(" Number Comma LogRangeExpr ")" Grouping
+}
+
+VectorAggregationExpr {
+  VectorOp "(" MetricExpr ")" |
+  VectorOp Grouping "(" MetricExpr ")" |
+  VectorOp "(" MetricExpr ")" Grouping |
+  VectorOp "(" Number Comma MetricExpr ")" |
+  VectorOp "(" Number Comma MetricExpr ")" Grouping |
+  VectorOp Grouping "(" Number Comma MetricExpr ")"
+}
+
+BinOpExpr {
+  Expr !or Or BinOpModifier Expr |
+  Expr !and And BinOpModifier Expr | 
+  Expr !and Unless BinOpModifier Expr | 
+  Expr !add Add BinOpModifier Expr |
+  Expr !add Sub BinOpModifier Expr |
+  Expr !mul Mul BinOpModifier Expr |
+  Expr !mul Div BinOpModifier Expr |
+  Expr !mul Mod BinOpModifier Expr |
+  Expr !pow Pow BinOpModifier Expr |
+  Expr !eql Eql BinOpModifier Expr |
+  Expr !eql Neq BinOpModifier Expr |
+  Expr !eql Gtr BinOpModifier Expr |
+  Expr !eql Gte BinOpModifier Expr |
+  Expr !eql Lss BinOpModifier Expr |
+  Expr !eql Lte BinOpModifier Expr 
+}
+
+LiteralExpr {
+  Number |
+  Add Number |
+  Sub Number
+}
+
+LabelReplaceExpr {
+  LabelReplace "(" MetricExpr Comma String Comma String Comma String Comma String ")"
+}
+
+RangeOp {
+  CountOverTime |
+  Rate |
+  BytesOverTime |
+  BytesRate |
+  AvgOverTime |
+  SumOverTime |
+  MinOverTime |
+  MaxOverTime |
+  StddevOverTime |
+  StdvarOverTime |
+  QuantileOverTime |
+  FirstOverTime |
+  LastOverTime |
+  AbsentOverTime
+}
+
+LogRangeExpr {
+  Selector Range |
+  Selector Range OffsetExpr |
+  "(" Selector ")" Range |
+  "(" Selector ")" Range OffsetExpr |
+  Selector Range UnwrapExpr |
+  Selector Range OffsetExpr UnwrapExpr |
+  "(" Selector ")" Range UnwrapExpr |
+  "(" Selector ")" Range Offset UnwrapExpr |
+  Selector UnwrapExpr Range |
+  Selector UnwrapExpr Range OffsetExpr |
+  "(" Selector UnwrapExpr ")" Range |
+  "(" Selector UnwrapExpr ")" Range OffsetExpr |
+  Selector PipelineExpr Range |
+  Selector PipelineExpr Range OffsetExpr |
+  "(" Selector PipelineExpr ")" Range |
+  "(" Selector PipelineExpr ")" Range OffsetExpr |
+  Selector Range PipelineExpr |
+  Selector Range OffsetExpr PipelineExpr |
+  Selector Range PipelineExpr UnwrapExpr |
+  Selector Range OffsetExpr PipelineExpr UnwrapExpr |
+  "(" LogRangeExpr ")"
+}
+
+VectorOp {
+  Sum |
+  Avg |
+  Count |
+  Max |
+  Min |
+  Stddev |
+  Stdvar |
+  Bottomk |
+  Topk
+}
+
+Grouping {
+  By "(" Labels ")" |
+  Without "(" Labels ")" |
+  By "(" ")" |
+  Without "(" ")"
+}
+
+BinOpModifier {
+  BoolModifier |
+  OnOrIgnoringModifier |
+  OnOrIgnoringModifier GroupLeft |
+  OnOrIgnoringModifier GroupLeft !mul "(" ")" |
+  OnOrIgnoringModifier GroupLeft !mul "(" Labels ")" |
+  OnOrIgnoringModifier GroupRight |
+  OnOrIgnoringModifier GroupRight !mul "(" ")" |
+  OnOrIgnoringModifier GroupRight !mul "(" Labels ")"
+}
+
+OffsetExpr {
+  Offset Duration
+}
+
+Range {
+  "[" Duration "]"
+}
+
+UnwrapExpr {
+  Pipe Unwrap Identifier |
+  Pipe Unwrap ConvOp "("  Identifier ")" |
+  Unwrap Pipe LabelFilter
+}
+
+Labels {
+  Identifier |
+  Labels Comma Identifier
+}
+
+BoolModifier {
+  Bool
+}
+
+OnOrIgnoringModifier {
+  BoolModifier On "(" Labels ")" |
+  BoolModifier On "(" ")" |
+  BoolModifier Ignoring "(" Labels ")" |
+  BoolModifier Ignoring "(" ")"
+}
+
+ConvOp {
+  BytesConv |
+  DurationConv |
+  DurationSecondsConv
+}
+
+
 @skip { whitespace | LineComment }
 
 @tokens {
@@ -169,6 +335,7 @@ BytesFilter {
     "'" (![\\\n'] | "\\" _)* "'"? |
     "`" ![`]* "`"
   }
+
   Number {
     (std.digit+ ("." std.digit*)? | "." std.digit+) (("e" | "E") ("+" | "-")? std.digit+)? |
     "0x" (std.digit | $[a-fA-F])+
@@ -189,9 +356,8 @@ BytesFilter {
     ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" ) ( std.digit+ "ms" )? ) |
     ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" ) )
   }
-
+  
   @precedence { Duration, Bytes, Number }
-
 
   Bytes {
     ( std.digit+ "b" ) |
@@ -224,8 +390,6 @@ BytesFilter {
   Comma { "," }
 
   // Operator
-  Or   { "or" }
-  And  { "and" }
   Eq   { "=" }
   Neq  { "!=" }
   Re   { "=~" }
@@ -238,6 +402,12 @@ BytesFilter {
   Eql  { "==" }
   PipeExact { "|=" }
   PipeMatch { "|~" }
+  Add { "+" }
+  Mul { "*" }
+  Mod { "%" }
+  Div { "/" }
+  Sub { "-" }
+  Pow { "^" }
 }
 
 @external specialize {Identifier} specializeIdentifier from "./tokens" {
@@ -246,7 +416,55 @@ BytesFilter {
   Unpack,
   Pattern,
   Regexp,
+  Unwrap,
   Ip,
   LabelFormat,
-  LineFormat
+  LineFormat,
+  LabelReplace
+  Offset,
+  Bool,
+  On,
+  Ignoring,
+  GroupLeft,
+  GroupRight,
+  BytesConv,
+  DurationConv,
+  DurationSecondsConv
 }
+
+@external extend {Identifier} extendIdentifier from "./tokens" {
+  By,
+  Without,
+  And,
+  Or, 
+  Unless,
+  Sum,
+  Avg,
+  Count,
+  Max,
+  Min,
+  Stddev,
+  Stdvar,
+  Bottomk,
+  Topk
+}
+
+// Range operations
+CountOverTime { condFn<"count_over_time"> }
+Rate { condFn<"rate"> }
+BytesOverTime { condFn<"bytes_over_time"> }
+BytesRate { condFn<"bytes_rate"> }
+AvgOverTime { condFn<"avg_over_time"> }
+SumOverTime { condFn<"sum_over_time"> }
+MinOverTime { condFn<"min_over_time"> }
+MaxOverTime { condFn<"max_over_time"> }
+StdvarOverTime { condFn<"stdvar_over_time"> }
+StddevOverTime { condFn<"stddev_over_time"> }
+QuantileOverTime { condFn<"quantile_over_time"> }
+FirstOverTime { condFn<"first_over_time"> }
+LastOverTime { condFn<"last_over_time"> }
+AbsentOverTime { condFn<"absent_over_time"> }
+
+
+// Conditional function names (only parsed as function names when used as such).
+condFn<term> { @extend<Identifier, term> }
