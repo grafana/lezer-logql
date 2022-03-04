@@ -1,12 +1,14 @@
 {
-  "name": "lezer-logql",
+  "name": "@grafana/lezer-logql",
   "version": "0.0.1",
-  "description": "LogQL lezer grammar",
+  "description": "Grafana Loki logQL lezer grammar",
   "main": "index.cjs",
   "type": "module",
   "module": "index.es.js",
   "types": "index.d.ts",
   "license": "Apache-2.0",
+  "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
+  "repository": "github:grafana/lezer-logql",
   "scripts": {
     "build": "bash ./build.sh",
     "test": "mocha test/test-*.js"
