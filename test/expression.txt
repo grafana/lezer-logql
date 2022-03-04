@@ -294,3 +294,19 @@ quantile_over_time(0.99,
 ==>
 
  LogQL(Expr(MetricExpr(RangeAggregationExpr(RangeOp(QuantileOverTime), Number, Comma, LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Comma, Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Json))), PipelineStage(Pipe, LabelFilter(Matcher(Identifier, Eq, String)))), UnwrapExpr(Pipe, Unwrap, Identifier), Range(Duration)), Grouping(By, Labels(Identifier))))))
+
+# Log query with multiple operations
+
+{cluster="ops",job="loki-ops/querier"} |= "76fcbcd455e629e" |= "logger.go" != "Summary" |logfmt | traceID="76fcbc57655e629a" and method="query.Exec" | line_format "store_decompressed={{ .Store_DecompressedBytes }}\tdownload_time={{ .Store_ChunksDownloadTime }}\tchunks_downloaded={{ .Store_TotalChunksDownloaded }}\tcompressed_bytes={{ .Store_CompressedBytes }}"
+
+==>
+
+ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Comma, Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String), LineFilter(Filter(PipeExact), String)))), PipelineStage(LineFilters(LineFilter(Filter(Neq), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(Matcher(Identifier, Eq, String)), And, LabelFilter(Matcher(Identifier, Eq, String))))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))))))
+
+# Log query with multiple operations and complex line_format
+
+{job="cortex-ops"} |= "finish in prometheus" | logfmt | line_format `{ "qs": {{ .queries }} }` | json qs="qs" | line_format "{{ range $q := fromJson .qs  }} {{ $q.query }} \n {{end}}"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))), PipelineStage(Pipe, JsonExpressionParser(Json, JsonExpressionList(JsonExpression(Identifier, Eq, String))))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))))))
