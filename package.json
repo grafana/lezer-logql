@@ -2,10 +2,10 @@
   "name": "@grafana/lezer-logql",
   "version": "0.0.6",
   "description": "Grafana Loki logQL lezer grammar",
-  "main": "index.cjs",
+  "main": "dist/index.cjs",
   "type": "module",
-  "module": "index.es.js",
-  "types": "index.d.ts",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
   "license": "Apache-2.0",
   "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
   "repository": {
@@ -30,11 +30,17 @@
     "@lezer/common": "^0.15.11"
   },
   "exports": {
-    "import": "./index.es.js",
-    "require": "./index.cjs"
+    "import": "./dist/index.es.js",
+    "require": "./dist/index.cjs"
   },
   "bugs": {
     "url": "https://github.com/grafana/lezer-logql/issues"
   },
-  "homepage": "https://github.com/grafana/lezer-logql#readme"
+  "homepage": "https://github.com/grafana/lezer-logql#readme",
+  "files": [
+    "dist/index.cjs",
+    "dist/index.d.ts",
+    "dist/index.es.js",
+    "package.json"
+  ]
 }
