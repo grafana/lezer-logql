@@ -8,7 +8,10 @@
   "types": "index.d.ts",
   "license": "Apache-2.0",
   "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
-  "repository": "github:grafana/lezer-logql",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grafana/lezer-logql.git"
+  },
   "scripts": {
     "build": "bash ./build.sh",
     "test": "mocha test/test-*.js"
@@ -29,5 +32,12 @@
   "exports": {
     "import": "./index.es.js",
     "require": "./index.cjs"
+  },
+  "bugs": {
+    "url": "https://github.com/grafana/lezer-logql/issues"
+  },
+  "homepage": "https://github.com/grafana/lezer-logql#readme",
+  "directories": {
+    "test": "test"
   }
 }
