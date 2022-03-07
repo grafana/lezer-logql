@@ -22,7 +22,7 @@ LogExpr {
 
 Selector {
   "{" Matchers "}" |
-  "{" Matchers Comma Matchers"}"
+  "{" Matchers "," Matchers"}"
 }
 
 PipelineExpr {
@@ -32,7 +32,7 @@ PipelineExpr {
 
 Matchers {
   Matcher |
-  Matcher !and Comma Matcher
+  Matcher !and "," Matcher
 }
 
 PipelineStage {
@@ -91,7 +91,7 @@ LabelFilter {
   NumberFilter |
   "(" LabelFilter ")" |
   LabelFilter !and And LabelFilter |
-  LabelFilter !and Comma LabelFilter |
+  LabelFilter !and "," LabelFilter |
   LabelFilter !or Or LabelFilter
 }
 
@@ -105,7 +105,7 @@ LabelFormatExpr {
 
 JsonExpressionList {
   JsonExpression |
-  JsonExpression !and Comma JsonExpression
+  JsonExpression !and "," JsonExpression
 }
 
 IpLabelFilter {
@@ -130,7 +130,7 @@ NumberFilter {
 
 LabelsFormat {
   LabelFormatMatcher |
-  LabelsFormat Comma LabelFormatMatcher
+  LabelsFormat "," LabelFormatMatcher
 }
 
 LabelFormatMatcher {
@@ -174,18 +174,18 @@ MetricExpr {
 
 RangeAggregationExpr {
   RangeOp "(" LogRangeExpr ")" |
-  RangeOp "(" Number Comma LogRangeExpr ")" |
+  RangeOp "(" Number "," LogRangeExpr ")" |
   RangeOp "(" LogRangeExpr ")" Grouping |
-  RangeOp "(" Number Comma LogRangeExpr ")" Grouping
+  RangeOp "(" Number "," LogRangeExpr ")" Grouping
 }
 
 VectorAggregationExpr {
   VectorOp "(" MetricExpr ")" |
   VectorOp Grouping "(" MetricExpr ")" |
   VectorOp "(" MetricExpr ")" Grouping |
-  VectorOp "(" Number Comma MetricExpr ")" |
-  VectorOp "(" Number Comma MetricExpr ")" Grouping |
-  VectorOp Grouping "(" Number Comma MetricExpr ")"
+  VectorOp "(" Number "," MetricExpr ")" |
+  VectorOp "(" Number "," MetricExpr ")" Grouping |
+  VectorOp Grouping "(" Number "," MetricExpr ")"
 }
 
 BinOpExpr {
@@ -213,7 +213,7 @@ LiteralExpr {
 }
 
 LabelReplaceExpr {
-  LabelReplace "(" MetricExpr Comma String Comma String Comma String Comma String ")"
+  LabelReplace "(" MetricExpr "," String "," String "," String "," String ")"
 }
 
 RangeOp {
@@ -326,7 +326,7 @@ UnwrapExpr {
 
 Labels {
   Identifier |
-  Labels Comma Identifier
+  Labels "," Identifier
 }
 
 ConvOp {
@@ -400,8 +400,6 @@ ConvOp {
     ( std.digit+ "eb" ) |
     ( std.digit+ "EB" ) 
   }
-
-  Comma { "," }
 
   // Operator
   Eq   { "=" }
