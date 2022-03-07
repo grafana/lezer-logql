@@ -22,7 +22,7 @@ LogExpr {
 
 Selector {
   "{" Matchers "}" |
-  "{" Matchers "," Matchers"}"
+  "{" Matchers "," "}"
 }
 
 PipelineExpr {
@@ -32,7 +32,7 @@ PipelineExpr {
 
 Matchers {
   Matcher |
-  Matcher !and "," Matcher
+  Matchers "," Matcher
 }
 
 PipelineStage {

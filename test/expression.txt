@@ -28,7 +28,7 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Re, String))))))
 
 ==>
 
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Re, String), Matcher(Identifier, Eq, String))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matchers(Matcher(Identifier, Re, String)), Matcher(Identifier, Eq, String))))))
 
 # Log query with regex matcher and back-ticks
 
@@ -44,7 +44,7 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Nre, String))))))
 
 ==>
 
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Matcher(Identifier, Eq, String))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matchers(Matcher(Identifier, Eq, String)), Matcher(Identifier, Eq, String))))))
 
 # Log query with 2 label-value pairs and back-ticks
 
@@ -52,7 +52,7 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Matcher(Id
 
 ==>
 
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Matcher(Identifier, Eq, String))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matchers(Matcher(Identifier, Eq, String)), Matcher(Identifier, Eq, String))))))
 
 
 # Log query with 2 label-value pairs and no space
@@ -61,7 +61,15 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Matcher(Id
 
 ==>
 
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Matcher(Identifier, Eq, String))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matchers(Matcher(Identifier, Eq, String)), Matcher(Identifier, Eq, String))))))
+
+# Log query with 5 label-value pairs
+
+{job="loki", instance="loki", a="a", b="b", c="c"}
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matchers(Matchers(Matchers(Matchers(Matcher(Identifier, Eq, String)), Matcher(Identifier, Eq, String)), Matcher(Identifier, Eq, String)), Matcher(Identifier, Eq, String)), Matcher(Identifier, Eq, String))))))
 
 # Log query with pipe exact filter expression
 
@@ -219,7 +227,7 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 
 ==>
 
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Matcher(Identifier, Eq, String)), Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String), LineFilter(Filter(Neq), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(Matcher(Identifier, Neq, String)))), PipelineStage(Pipe, LabelFormatExpr(LabelFormat, LabelsFormat(LabelFormatMatcher(Identifier, Eq, String))))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matchers(Matchers(Matcher(Identifier, Eq, String)), Matcher(Identifier, Eq, String)), Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String), LineFilter(Filter(Neq), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(Matcher(Identifier, Neq, String)))), PipelineStage(Pipe, LabelFormatExpr(LabelFormat, LabelsFormat(LabelFormatMatcher(Identifier, Eq, String))))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))))))
 
 # Numeric literals
 
@@ -281,7 +289,7 @@ sum by (org_id) (
 
 ==>
 
-LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), Grouping(By, Labels(Identifier)), MetricExpr(RangeAggregationExpr(RangeOp(SumOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), UnwrapExpr(Pipe, Unwrap, Identifier), Range(Duration))))))))
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), Grouping(By, Labels(Identifier)), MetricExpr(RangeAggregationExpr(RangeOp(SumOverTime), LogRangeExpr(Selector(Matchers(Matchers(Matcher(Identifier, Eq, String)), Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), UnwrapExpr(Pipe, Unwrap, Identifier), Range(Duration))))))))
 
 # Quantile over time by query with unwrap
 
@@ -293,7 +301,7 @@ quantile_over_time(0.99,
 
 ==>
 
- LogQL(Expr(MetricExpr(RangeAggregationExpr(RangeOp(QuantileOverTime), Number, LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Json))), PipelineStage(Pipe, LabelFilter(Matcher(Identifier, Eq, String)))), UnwrapExpr(Pipe, Unwrap, Identifier), Range(Duration)), Grouping(By, Labels(Identifier))))))
+LogQL(Expr(MetricExpr(RangeAggregationExpr(RangeOp(QuantileOverTime), Number, LogRangeExpr(Selector(Matchers(Matchers(Matcher(Identifier, Eq, String)), Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Json))), PipelineStage(Pipe, LabelFilter(Matcher(Identifier, Eq, String)))), UnwrapExpr(Pipe, Unwrap, Identifier), Range(Duration)), Grouping(By, Labels(Identifier))))))
 
 # Log query with multiple operations
 
@@ -301,7 +309,7 @@ quantile_over_time(0.99,
 
 ==>
 
- LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String), Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String), LineFilter(Filter(PipeExact), String)))), PipelineStage(LineFilters(LineFilter(Filter(Neq), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(Matcher(Identifier, Eq, String)), And, LabelFilter(Matcher(Identifier, Eq, String))))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matchers(Matcher(Identifier, Eq, String)), Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String), LineFilter(Filter(PipeExact), String)))), PipelineStage(LineFilters(LineFilter(Filter(Neq), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(Matcher(Identifier, Eq, String)), And, LabelFilter(Matcher(Identifier, Eq, String))))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))))))
 
 # Log query with multiple operations and complex line_format
 
