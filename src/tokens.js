@@ -20,9 +20,6 @@ import {
     GroupLeft,
     GroupRight,
     Unwrap,
-    BytesConv,
-    DurationConv,
-    DurationSecondsConv,
     Sum,
     Avg,
     Count,
@@ -51,9 +48,6 @@ const keywordTokens = {
     group_left: GroupLeft,
     group_right: GroupRight,
     unwrap: Unwrap,
-    bytes: BytesConv,
-    duration: DurationConv,
-    duration_seconds: DurationSecondsConv
 };
 
 export const specializeIdentifier = (value, stack) => {
