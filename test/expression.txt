@@ -198,7 +198,7 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 
 ==>
 
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(DurationConv, Gtr, Duration))), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Gtr, Bytes)))))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(Identifier, Gtr, Duration))), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Gtr, Bytes)))))))))
 
 # Complex log query with duration and bytes
 
@@ -206,15 +206,7 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 
 ==>
 
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(DurationConv, Gte, Duration))), Or, LabelFilter(LabelFilter(LabelFilter(Matcher(Identifier, Eq, String)), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Lte, Bytes)))))))))))
-
-# Complex log query with duration and bytes
-
-{job="mysql"} | logfmt | duration >= 20ms or (method="GET" and size <= 20KB)
-
-==>
-
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(DurationConv, Gte, Duration))), Or, LabelFilter(LabelFilter(LabelFilter(Matcher(Identifier, Eq, String)), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Lte, Bytes)))))))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(Identifier, Gte, Duration))), Or, LabelFilter(LabelFilter(LabelFilter(Matcher(Identifier, Eq, String)), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Lte, Bytes)))))))))))
 
 # Complex log query with parsing, filtering, label formatting and line formatting
 
@@ -251,7 +243,7 @@ sum by (host) (rate({job="mysql"} |= "error" != "timeout" | json | duration > 10
 
 ==>
 
-LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), Grouping(By, Labels(Identifier)), MetricExpr(RangeAggregationExpr(RangeOp(Rate), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String), LineFilter(Filter(Neq), String)))), PipelineStage(Pipe, LabelParser(Json))), PipelineStage(Pipe, LabelFilter(UnitFilter(DurationFilter(DurationConv, Gtr, Duration))))), Range(Duration))))))))
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), Grouping(By, Labels(Identifier)), MetricExpr(RangeAggregationExpr(RangeOp(Rate), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String), LineFilter(Filter(Neq), String)))), PipelineStage(Pipe, LabelParser(Json))), PipelineStage(Pipe, LabelFilter(UnitFilter(DurationFilter(Identifier, Gtr, Duration))))), Range(Duration))))))))
 
 # Vector aggregation query topk
 
@@ -318,3 +310,28 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matchers(Matcher(Identifier, Eq, String)), 
 ==>
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))), PipelineStage(Pipe, JsonExpressionParser(Json, JsonExpressionList(JsonExpression(Identifier, Eq, String))))), PipelineStage(Pipe, LineFormatExpr(LineFormat, String))))))
+
+# Metrics query with unwrap with duration as label
+
+sum(sum_over_time({job="grafana"} |= "error" | logfmt | unwrap duration | __error__="" [5m]))
+
+==>
+
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggregationExpr(RangeOp(SumOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), UnwrapExpr(UnwrapExpr(Pipe, Unwrap, Identifier), Pipe, LabelFilter(Matcher(Identifier, Eq, String))), Range(Duration))))))))
+
+
+# Metrics query with unwrap with duration as function
+
+sum(sum_over_time({job="grafana"} |= "error" | logfmt | unwrap duration(label) | __error__="" [5m]))
+
+==>
+
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggregationExpr(RangeOp(SumOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), UnwrapExpr(UnwrapExpr(Pipe, Unwrap, ConvOp(DurationConv), Identifier), Pipe, LabelFilter(Matcher(Identifier, Eq, String))), Range(Duration))))))))
+
+# Metrics query with unwrap with duration_seconds as function
+
+sum(sum_over_time({job="grafana"} |= "error" | logfmt | unwrap duration_seconds (label) | __error__="" [5m]))
+
+==>
+
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggregationExpr(RangeOp(SumOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), UnwrapExpr(UnwrapExpr(Pipe, Unwrap, ConvOp(DurationSecondsConv), Identifier), Pipe, LabelFilter(Matcher(Identifier, Eq, String))), Range(Duration))))))))

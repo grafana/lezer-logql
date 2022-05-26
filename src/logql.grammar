@@ -143,13 +143,13 @@ JsonExpression {
 }
 
 DurationFilter {
-  DurationConv !eql Gtr Duration |
-  DurationConv !eql Gte Duration |
-  DurationConv !eql Lss Duration |
-  DurationConv !eql Lte Duration |
-  DurationConv !eql Neq Duration |
-  DurationConv !eql Eq Duration |
-  DurationConv !eql Eql Duration
+  Identifier !eql Gtr Duration |
+  Identifier !eql Gte Duration |
+  Identifier !eql Lss Duration |
+  Identifier !eql Lte Duration |
+  Identifier !eql Neq Duration |
+  Identifier !eql Eq Duration |
+  Identifier !eql Eql Duration
 }
 
 BytesFilter {
@@ -321,7 +321,7 @@ Range {
 UnwrapExpr {
   Pipe Unwrap Identifier |
   Pipe Unwrap ConvOp "("  Identifier ")" |
-  Unwrap Pipe LabelFilter
+  UnwrapExpr Pipe LabelFilter
 }
 
 Labels {
@@ -438,10 +438,7 @@ ConvOp {
   On,
   Ignoring,
   GroupLeft,
-  GroupRight,
-  BytesConv,
-  DurationConv,
-  DurationSecondsConv
+  GroupRight
 }
 
 @external extend {Identifier} extendIdentifier from "./tokens" {
@@ -476,6 +473,11 @@ QuantileOverTime { condFn<"quantile_over_time"> }
 FirstOverTime { condFn<"first_over_time"> }
 LastOverTime { condFn<"last_over_time"> }
 AbsentOverTime { condFn<"absent_over_time"> }
+
+// Conversion functions used with unwrap
+BytesConv { condFn<"bytes"> }
+DurationConv { condFn<"duration"> }
+DurationSecondsConv { condFn<"duration_seconds"> }
 
 
 // Conditional function names (only parsed as function names when used as such).
