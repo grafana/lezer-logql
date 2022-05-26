@@ -317,7 +317,7 @@ sum(sum_over_time({job="grafana"} |= "error" | logfmt | unwrap duration | __erro
 
 ==>
 
- LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggregationExpr(RangeOp(SumOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), UnwrapExpr(UnwrapExpr(Pipe, Unwrap, Identifier), Pipe, LabelFilter(Matcher(Identifier, Eq, String))), Range(Duration))))))))
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggregationExpr(RangeOp(SumOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), UnwrapExpr(UnwrapExpr(Pipe, Unwrap, Identifier), Pipe, LabelFilter(Matcher(Identifier, Eq, String))), Range(Duration))))))))
 
 
 # Metrics query with unwrap with duration as function
@@ -330,7 +330,7 @@ LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggre
 
 # Metrics query with unwrap with duration_seconds as function
 
-sum(sum_over_time({job="grafana"} |= "error" | logfmt | unwrap duration_seconds(label) | __error__="" [5m]))
+sum(sum_over_time({job="grafana"} |= "error" | logfmt | unwrap duration_seconds (label) | __error__="" [5m]))
 
 ==>
 
