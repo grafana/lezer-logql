@@ -53,7 +53,7 @@ Matcher {
 
 LineFilters {
   LineFilter | 
-  LineFilter LineFilter
+  LineFilters LineFilter
 }
 
 LineFilter {
