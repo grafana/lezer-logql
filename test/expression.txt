@@ -335,3 +335,11 @@ sum(sum_over_time({job="grafana"} |= "error" | logfmt | unwrap duration_seconds 
 ==>
 
 LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggregationExpr(RangeOp(SumOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LabelParser(Logfmt))), UnwrapExpr(UnwrapExpr(Pipe, Unwrap, ConvOp(DurationSecondsConv), Identifier), Pipe, LabelFilter(Matcher(Identifier, Eq, String))), Range(Duration))))))))
+
+# Log query with multiple json expressions
+
+{job="cortex-ops"} |= "finish in prometheus" | json firstServer="server[0]", a="b", c_d="e"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, JsonExpressionParser(Json, JsonExpressionList(JsonExpressionList(JsonExpressionList(JsonExpression(Identifier, Eq, String)), JsonExpression(Identifier, Eq, String)), JsonExpression(Identifier, Eq, String))))))))
