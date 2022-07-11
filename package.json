@@ -1,6 +1,6 @@
 {
   "name": "@grafana/lezer-logql",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Grafana Loki logQL lezer grammar",
   "main": "index.cjs",
   "type": "module",
@@ -16,18 +16,15 @@
     "build": "bash ./build.sh",
     "test": "mocha test/test-*.js"
   },
-  "dependencies": {
-    "lezer": "^0.13.5"
-  },
   "devDependencies": {
-    "@lezer/lr": "^0.15.8",
-    "@lezer/generator": "^0.15.2",
+    "@lezer/lr": "^1.0.0",
+    "@lezer/generator": "^1.0.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "mocha": "^9.1.4",
     "rollup": "^2.27.1"
   },
   "peerDependencies": {
-    "@lezer/lr": "^0.15.8"
+    "@lezer/lr": "^1.0.0"
   },
   "exports": {
     "import": "./index.es.js",
