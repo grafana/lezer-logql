@@ -343,8 +343,7 @@ ConvOp {
   LineComment { "#" ![\n]* }
 
   String { // TODO: This is for JS, make this work for LogQL.
-    '"' (![\\\n"] | "\\" _)* '"'? |
-    "'" (![\\\n'] | "\\" _)* "'"? |
+    '"' (![\\\n"] | "\\" _)* '"' |
     "`" ![`]* "`"
   }
 
