@@ -87,6 +87,37 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier,Eq,String))),PipelineExp
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier,Eq,String))),PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact),String)))))))
 
+# Log query with pipe exact filter and unclosed quotes
+
+{job="loki"} |= "line
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), ⚠, ⚠(Identifier))))))))
+
+# Log query with pipe exact filter and unclosed back-ticks
+
+{job="loki"} |= `line
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), ⚠, ⚠(Identifier))))))))
+# Log query with pipe exact filter expression and escaped quotes
+
+{job="loki"} |= "hello\"quotes\""
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier,Eq,String))),PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact),String)))))))
+
+# Log query with pipe exact line filter expression and back-ticks and quotes
+
+{job="loki"} |= `hello"quotes"`
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier,Eq,String))),PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact),String)))))))
+
 # Log query with pipe match line filter
 
 {job="loki"} |~ `error=\w+`
