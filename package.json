@@ -1,6 +1,6 @@
 {
   "name": "@grafana/lezer-logql",
-  "version": "0.0.19",
+  "version": "0.0.19", 
   "description": "Grafana Loki logQL lezer grammar",
   "main": "index.cjs",
   "type": "module",
