@@ -219,6 +219,7 @@ LabelReplaceExpr {
 RangeOp {
   CountOverTime |
   Rate |
+  RateCounter |
   BytesOverTime |
   BytesRate |
   AvgOverTime |
@@ -460,6 +461,7 @@ ConvOp {
 // Range operations
 CountOverTime { condFn<"count_over_time"> }
 Rate { condFn<"rate"> }
+RateCounter { condFn<"rate_counter"> }
 BytesOverTime { condFn<"bytes_over_time"> }
 BytesRate { condFn<"bytes_rate"> }
 AvgOverTime { condFn<"avg_over_time"> }
