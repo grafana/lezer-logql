@@ -169,6 +169,7 @@ MetricExpr {
   BinOpExpr |
   LiteralExpr |
   LabelReplaceExpr |
+  VectorExpr |
   "(" MetricExpr ")"
 }
 
@@ -214,6 +215,10 @@ LiteralExpr {
 
 LabelReplaceExpr {
   LabelReplace "(" MetricExpr "," String "," String "," String "," String ")"
+}
+
+VectorExpr {
+  Vector "(" Number ")"
 }
 
 RangeOp {
@@ -433,6 +438,7 @@ ConvOp {
   LabelFormat,
   LineFormat,
   LabelReplace
+  Vector
   Offset,
   Bool,
   On,
