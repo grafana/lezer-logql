@@ -260,6 +260,14 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matchers(Matchers(Matcher(Identifier, Eq, S
 
 LogQL(Expr(MetricExpr(LiteralExpr(Number))))
 
+# Numeric Vector
+
+vector(5)
+
+==>
+
+LogQL(Expr(MetricExpr(VectorExpr(Vector, Number))))
+
 # Count over time query
 
 count_over_time({job="mysql"}[5m])
