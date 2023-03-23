@@ -389,3 +389,11 @@ LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggre
 ==>
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, JsonExpressionParser(Json, JsonExpressionList(JsonExpressionList(JsonExpressionList(JsonExpression(Identifier, Eq, String)), JsonExpression(Identifier, Eq, String)), JsonExpression(Identifier, Eq, String))))))))
+
+# Simple log query with back-ticks and comma to have error
+
+{job="loki",}
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matchers(Matcher(Identifier, Eq, String)), ⚠)))))
