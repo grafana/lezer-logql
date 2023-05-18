@@ -29,7 +29,8 @@ import {
     Stddev,
     Stdvar,
     Bottomk,
-    Topk
+    Topk,
+    Distinct
 } from './parser.terms.js';
 
 const keywordTokens = {
@@ -50,6 +51,7 @@ const keywordTokens = {
     group_left: GroupLeft,
     group_right: GroupRight,
     unwrap: Unwrap,
+    distinct: Distinct,
 };
 
 export const specializeIdentifier = (value, stack) => {

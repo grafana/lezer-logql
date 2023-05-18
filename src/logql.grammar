@@ -40,7 +40,8 @@ PipelineStage {
   Pipe JsonExpressionParser |
   Pipe LabelFilter |
   Pipe LineFormatExpr |
-  Pipe LabelFormatExpr
+  Pipe LabelFormatExpr |
+  Pipe DistinctFilter
 }
 
 Matcher {
@@ -83,6 +84,10 @@ JsonExpressionParser {
   Json JsonExpressionList
 }
 
+DistinctFilter {
+  Distinct DistinctFilterList
+}
+
 LabelFilter {
   Matcher |
   IpLabelFilter |
@@ -105,6 +110,11 @@ LabelFormatExpr {
 JsonExpressionList {
   JsonExpression |
   JsonExpressionList !and "," JsonExpression
+}
+
+DistinctFilterList {
+  Identifier |
+  DistinctFilterList !and "," Identifier
 }
 
 IpLabelFilter {
@@ -443,7 +453,8 @@ ConvOp {
   On,
   Ignoring,
   GroupLeft,
-  GroupRight
+  GroupRight,
+  Distinct
 }
 
 @external extend {Identifier} extendIdentifier from "./tokens" {
