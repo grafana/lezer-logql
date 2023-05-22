@@ -85,7 +85,7 @@ JsonExpressionParser {
 }
 
 DistinctFilter {
-  Distinct DistinctFilterList
+  Distinct DistinctLabel
 }
 
 LabelFilter {
@@ -112,9 +112,9 @@ JsonExpressionList {
   JsonExpressionList !and "," JsonExpression
 }
 
-DistinctFilterList {
+DistinctLabel {
   Identifier |
-  DistinctFilterList !and "," Identifier
+  DistinctLabel !and "," Identifier
 }
 
 IpLabelFilter {

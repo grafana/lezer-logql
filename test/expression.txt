@@ -404,7 +404,7 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matchers(Matcher(Identifier, Eq, String)), 
 
 ==>
 
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, DistinctFilter(Distinct, DistinctFilterList(Identifier)))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, DistinctFilter(Distinct, DistinctLabel(Identifier)))))))
 
 # Log query with distinct filter with many fields
 
@@ -412,7 +412,7 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 
 ==>
 
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, DistinctFilter(Distinct, DistinctFilterList(DistinctFilterList(Identifier), Identifier)))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, DistinctFilter(Distinct, DistinctLabel(DistinctLabel(Identifier), Identifier)))))))
 
 # Log query with parser and distinct filter with many fields
 
@@ -420,4 +420,4 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 
 ==>
 
-LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Json))), PipelineStage(Pipe, DistinctFilter(Distinct, DistinctFilterList(DistinctFilterList(Identifier), Identifier)))))))
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Json))), PipelineStage(Pipe, DistinctFilter(Distinct, DistinctLabel(DistinctLabel(Identifier), Identifier)))))))
