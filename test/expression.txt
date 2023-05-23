@@ -421,3 +421,19 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 ==>
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Json))), PipelineStage(Pipe, DistinctFilter(Distinct, DistinctLabel(DistinctLabel(Identifier), Identifier)))))))
+
+# Log query with decolorize
+
+{job="loki"} | decolorize
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, DecolorizeExpr(Decolorize))))))
+
+# Log query with pipe operations and decolorize
+
+{job="loki"} | logfmt | label="value" | decolorize
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(Pipe, LabelParser(Logfmt))), PipelineStage(Pipe, LabelFilter(Matcher(Identifier, Eq, String)))), PipelineStage(Pipe, DecolorizeExpr(Decolorize))))))

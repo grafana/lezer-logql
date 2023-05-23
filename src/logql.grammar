@@ -41,7 +41,8 @@ PipelineStage {
   Pipe LabelFilter |
   Pipe LineFormatExpr |
   Pipe LabelFormatExpr |
-  Pipe DistinctFilter
+  Pipe DistinctFilter |
+  Pipe DecolorizeExpr
 }
 
 Matcher {
@@ -105,6 +106,10 @@ LineFormatExpr {
 
 LabelFormatExpr {
   LabelFormat !and LabelsFormat
+}
+
+DecolorizeExpr {
+  Decolorize
 }
 
 JsonExpressionList {
@@ -454,7 +459,8 @@ ConvOp {
   Ignoring,
   GroupLeft,
   GroupRight,
-  Distinct
+  Distinct,
+  Decolorize
 }
 
 @external extend {Identifier} extendIdentifier from "./tokens" {
