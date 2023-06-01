@@ -23,27 +23,26 @@
     </style>
   </head>
   <body>
-    <textarea style="width: 100%; resize: vertical" id="in" type="text">
-count_over_time({level="info"}[10s])</textarea
+    <textarea style="width: 100%; resize: vertical" id="in" type="text">count_over_time({level="info"}[10s])</textarea
     >
     <div id="cursor-pos"></div>
     <div id="out"></div>
     <script type="module">
-      import("@grafana/lezer-logql").then(
+      import('@grafana/lezer-logql').then(
         (lezerLogQL) => {
-          const inElem = document.querySelector("#in");
-          const cursorPosElem = document.querySelector("#cursor-pos");
+          const inElem = document.querySelector('#in');
+          const cursorPosElem = document.querySelector('#cursor-pos');
 
-          let currentlyVisualizedText = "";
+          let currentlyVisualizedText = '';
           let currentlyVisualizedPos = 0;
 
-          const graphViz = d3.select("#out").graphviz();
+          const graphViz = d3.select('#out').graphviz();
 
           inElem.focus();
           inElem.setSelectionRange(25, 25);
 
           function getNodeText(node) {
-            const prefix = node.type.isError ? "ERROR" : node.name;
+            const prefix = node.type.isError ? 'ERROR' : node.name;
             return `${prefix}_${node.index}__${node.from}_${node.to}`;
           }
 
@@ -59,10 +58,7 @@ count_over_time({level="info"}[10s])</textarea
             const text = inElem.value;
             const pos = inElem.selectionStart;
 
-            if (
-              text === currentlyVisualizedText &&
-              pos === currentlyVisualizedPos
-            ) {
+            if (text === currentlyVisualizedText && pos === currentlyVisualizedPos) {
               // no changes
               return;
             }
@@ -80,7 +76,7 @@ count_over_time({level="info"}[10s])</textarea
             const nodeText = getNodeText(tree.cursor(pos));
 
             const graphText = `digraph {
-              ${graphLines.join("\n")}
+              ${graphLines.join('\n')}
               ${nodeText} [style=filled]
             }`.trim();
 
@@ -94,13 +90,11 @@ count_over_time({level="info"}[10s])</textarea
 
           render();
 
-          inElem.addEventListener("keyup", render);
-          inElem.addEventListener("click", render);
+          inElem.addEventListener('keyup', render);
+          inElem.addEventListener('click', render);
         },
         (error) => {
-          window.alert(
-            "module import failed. this requires a browser with import map support."
-          );
+          window.alert('module import failed. this requires a browser with import map support.');
           console.error(error);
         }
       );
