@@ -1,7 +1,7 @@
 import { formatLokiQuery } from "./formatter.js";
 import { needsBrackets, iterateNode, indent, indentMultiline } from "./utils.js";
 import { formatSelector } from "./logs.js";
-import { trimEnd } from "lodash";
+import lodash from "lodash";
 import {
   Identifier,
   String,
@@ -31,6 +31,8 @@ import {
   LabelReplaceExpr,
   BinOpExpr,
 } from "@grafana/lezer-logql";
+
+const { trimEnd } = lodash;
 
 export const formatMetricExpr = (node, query) => {
   const { addBrackets, newNode } = needsBrackets(node, MetricExpr);

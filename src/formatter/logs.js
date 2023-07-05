@@ -1,5 +1,5 @@
 import { needsBrackets, iterateNode, buildResponse } from "./utils.js";
-import { trimEnd } from "lodash";
+import lodash from "lodash";
 import {
   Identifier,
   String,
@@ -31,6 +31,8 @@ import {
   Selector,
   PipelineExpr,
 } from "@grafana/lezer-logql";
+
+const { trimEnd } = lodash;
 
 export const formatLogExpr = (node, query) => {
   const { addBrackets, newNode } = needsBrackets(node, LogExpr);
