@@ -28,4 +28,6 @@ import { LRParser } from '@lezer/lr'
 
 export const parser: LRParser
 $(sed -E 's/ = [0-9]+/: number/' src/parser.terms.js)
+
+export const formatLokiQuery: (query: string) => string
 EOF
