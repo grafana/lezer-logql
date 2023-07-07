@@ -261,7 +261,7 @@ LogRangeExpr {
   Selector Range UnwrapExpr |
   Selector Range OffsetExpr UnwrapExpr |
   "(" Selector ")" Range UnwrapExpr |
-  "(" Selector ")" Range Offset UnwrapExpr |
+  "(" Selector ")" Range OffsetExpr UnwrapExpr |
   Selector UnwrapExpr Range |
   Selector UnwrapExpr Range OffsetExpr |
   "(" Selector UnwrapExpr ")" Range |
