@@ -1,10 +1,10 @@
-/* eslint-disable no-undef */
 import { parser } from '../dist/index.es.js';
 import { fileTests } from './utils.js';
 
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { describe, it } from 'mocha';
 
 let caseDir = path.dirname(fileURLToPath(import.meta.url));
 for (const file of fs.readdirSync(caseDir)) {
