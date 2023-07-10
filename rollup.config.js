@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-escape */
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 export default {
@@ -14,7 +13,7 @@ export default {
     },
   ],
   external(id) {
-    return !/^[.\/]/.test(id);
+    return !/^[./]/.test(id);
   },
   plugins: [nodeResolve()],
 };
