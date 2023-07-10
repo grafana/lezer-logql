@@ -7,7 +7,7 @@
 export function treeToString(tree) {
   let actual = '';
   tree.iterate({
-    enter(type, start) {
+    enter(type) {
       if (!type.name) return;
       if (actual.length > 1 && actual.charAt(actual.length - 1) !== '(') {
         // This is a case where we have sibling tokens so lets separate them,
@@ -16,7 +16,7 @@ export function treeToString(tree) {
       actual += type.name + '(';
       return undefined;
     },
-    leave(type, start) {
+    leave() {
       if (actual.charAt(actual.length - 1) === '(') {
         // In case token is empty (no children) we don't want to render empty '()'
         actual = actual.substring(0, actual.length - 1);

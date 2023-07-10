@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-useless-escape */
 import { parser } from '../dist/index.es.js';
 import { fileTests } from './utils.js';
 
