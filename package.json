@@ -14,14 +14,29 @@
   },
   "scripts": {
     "build": "bash ./build.sh",
-    "test": "mocha test/test-*.js"
+    "test": "mocha test/test-*.js",
+    "pre-commit": "lint-staged",
+    "prepare": "husky install"
   },
   "devDependencies": {
-    "@lezer/lr": "^1.0.0",
     "@lezer/generator": "^1.0.0",
+    "@lezer/lr": "^1.0.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
+    "eslint": "^8.44.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.3",
     "mocha": "^9.1.4",
+    "prettier": "^3.0.0",
     "rollup": "^2.27.1"
+  },
+  "lint-staged": {
+    "**/*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{json,md}": [
+      "prettier --write"
+    ]
   },
   "peerDependencies": {
     "@lezer/lr": "^1.0.0"

@@ -56,7 +56,7 @@ const keywordTokens = {
   decolorize: Decolorize,
 };
 
-export const specializeIdentifier = (value, stack) => {
+export const specializeIdentifier = (value) => {
   return keywordTokens[value.toLowerCase()] || -1;
 };
 
@@ -77,6 +77,6 @@ const contextualKeywordTokens = {
   topk: Topk,
 };
 
-export const extendIdentifier = (value, stack) => {
+export const extendIdentifier = (value) => {
   return contextualKeywordTokens[value.toLowerCase()] || -1;
 };
