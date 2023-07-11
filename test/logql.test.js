@@ -3,10 +3,9 @@ import { fileTests } from './utils.js';
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { fileURLToPath } from 'url';
-import { describe, it } from 'mocha';
+import { describe, it } from '@jest/globals';
 
-let caseDir = path.dirname(fileURLToPath(import.meta.url));
+let caseDir = path.dirname(__filename);
 for (const file of fs.readdirSync(caseDir)) {
   if (!/\.txt$/.test(file)) continue;
 
