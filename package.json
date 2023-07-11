@@ -15,6 +15,7 @@
   "scripts": {
     "build": "bash ./build.sh",
     "test": "jest",
+    "build:test": "npm run build && npm run test",
     "pre-commit": "lint-staged",
     "prepare": "husky install"
   },
