@@ -19,9 +19,12 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@babel/core": "^7.22.8",
+    "@babel/preset-env": "^7.22.7",
     "@lezer/generator": "^1.0.0",
     "@lezer/lr": "^1.0.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
+    "babel-jest": "^29.6.1",
     "eslint": "^8.44.0",
     "husky": "^8.0.3",
     "jest": "^29.6.1",
