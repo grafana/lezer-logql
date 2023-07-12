@@ -1,4 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
+import { formatLokiQuery } from '../src/exports';
 import {
   parser,
   Selector,
@@ -42,6 +43,266 @@ import {
   formatLabelReplaceExpr,
   formatVectorExpr,
 } from '../src/formatter/metrics';
+
+describe('formatLokiQuery', () => {
+  describe('LogExpr', () => {
+    it('spaces labels in selectors', () => {
+      expect(formatLokiQuery(`{labelA="A",labelB="B",labelC="C",labelD="D"}`)).toBe(
+        `{labelA="A", labelB="B", labelC="C", labelD="D"}`
+      );
+    });
+
+    it('orders labels in selectors', () => {
+      expect(formatLokiQuery(`{labelB="B", labelA="A"}`)).toBe(`{labelA="A", labelB="B"}`);
+    });
+
+    it('formats mixed pipeline expressions', () => {
+      expect(formatLokiQuery(`{label=""}|=""|json|decolorize`)).toBe(`{label=""}\n  |= ""\n  | json\n  | decolorize`);
+    });
+
+    it('handles line filters', () => {
+      expect(formatLokiQuery(`{label=""}|="contains"!="not contains"|~"regex match"!~"not regex match"`)).toBe(
+        `{label=""}\n  |= "contains" != "not contains" |~ "regex match" !~ "not regex match"`
+      );
+      expect(formatLokiQuery(`{label=""}|=""`)).toBe(`{label=""}\n  |= ""`);
+      expect(formatLokiQuery(`{label=""}!=""`)).toBe(`{label=""}\n  != ""`);
+      expect(formatLokiQuery(`{label=""}|~""`)).toBe(`{label=""}\n  |~ ""`);
+      expect(formatLokiQuery(`{label=""}!~""`)).toBe(`{label=""}\n  !~ ""`);
+    });
+
+    it('handles label parsers', () => {
+      expect(formatLokiQuery(`{label=""}|json`)).toBe(`{label=""}\n  | json`);
+      expect(formatLokiQuery(`{label=""}|logfmt`)).toBe(`{label=""}\n  | logfmt`);
+      expect(formatLokiQuery(`{label=""}|regexp ""`)).toBe(`{label=""}\n  | regexp""`);
+      expect(formatLokiQuery(`{label=""}|unpack`)).toBe(`{label=""}\n  | unpack`);
+      expect(formatLokiQuery(`{label=""}|pattern ""`)).toBe(`{label=""}\n  | pattern""`);
+    });
+
+    it('handles json expression parsers', () => {
+      expect(formatLokiQuery(`{label=""}|json label=""`)).toBe(`{label=""}\n  | json label=""`);
+      expect(formatLokiQuery(`{label=""}|json labelA="A",labelB="B"`)).toBe(
+        `{label=""}\n  | json labelA="A", labelB="B"`
+      );
+    });
+
+    it('handles label filters', () => {
+      expect(formatLokiQuery(`{label=""} | label=""`)).toBe(`{label=""}\n  | label=""`);
+      expect(formatLokiQuery(`{label=""} | label=ip("")`)).toBe(`{label=""}\n  | label=ip("")`);
+      expect(formatLokiQuery(`{label=""} | label=10s`)).toBe(`{label=""}\n  | label=10s`);
+      expect(formatLokiQuery(`{label=""} | label=1GB`)).toBe(`{label=""}\n  | label=1GB`);
+      expect(formatLokiQuery(`{label=""} | label=42`)).toBe(`{label=""}\n  | label=42`);
+      // expect(formatLokiQuery(`{label=""} | labelA="A" and labelB="B"`)).toBe(
+      //   `{label=""}\n  | labelA="A" and labelB="B"`
+      // );
+      // expect(formatLokiQuery(`{label=""} | labelA="A" or labelB="B"`)).toBe(
+      //   `{label=""}\n  | labelA="A" or labelB="B"`
+      // );
+      // expect(formatLokiQuery(`{label=""} | labelA="A", labelB="B"`)).toBe(`{label=""}\n  | labelA="A", d labelB="B"`);
+    });
+
+    it('handles line format expressions', () => {
+      expect(formatLokiQuery(`{label=""}|line_format""`)).toBe(`{label=""}\n  | line_format ""`);
+    });
+
+    it('handles label format expressions', () => {
+      expect(formatLokiQuery(`{label=""}|label_format label=""`)).toBe(`{label=""}\n  | label_format label=""`);
+      expect(formatLokiQuery(`{label=""}|label_format label="",label=""`)).toBe(
+        `{label=""}\n  | label_format label="", label=""`
+      );
+      expect(formatLokiQuery(`{label=""}|label_format labelA=labelB`)).toBe(
+        `{label=""}\n  | label_format labelA=labelB`
+      );
+      expect(formatLokiQuery(`{label=""}|label_format labelA=labelB,labelA=labelB`)).toBe(
+        `{label=""}\n  | label_format labelA=labelB, labelA=labelB`
+      );
+      expect(formatLokiQuery(`{label=""}|label_format label="",labelA=labelB`)).toBe(
+        `{label=""}\n  | label_format label="", labelA=labelB`
+      );
+    });
+
+    it('handles distinct filters', () => {
+      expect(formatLokiQuery(`{label=""}|distinct label`)).toBe(`{label=""}\n  | distinct label`);
+      expect(formatLokiQuery(`{label=""}|distinct labelA,labelB`)).toBe(`{label=""}\n  | distinct labelA, labelB`);
+    });
+
+    it('handles decolorize expressions', () => {
+      expect(formatLokiQuery(`{label=""}|decolorize`)).toBe(`{label=""}\n  | decolorize`);
+    });
+
+    it('handles log expressions wrapped in "(" ")"', () => {
+      expect(formatLokiQuery(`({labelB="B",labelA="A"})`)).toBe(`({labelA="A", labelB="B"})`);
+      // expect(formatLokiQuery(`({label=""}|=""|json|decolorize)`)).toBe(`({label=""}\n  |= ""\n  | json\n  | decolorize)`);
+    });
+  });
+
+  describe('MetricExpr', () => {
+    it('handles range aggregation expressions', () => {
+      expect(formatLokiQuery(`rate({label=""}[1s])`)).toBe(`rate(\n  {label=""}\n  [1s]\n)`);
+      expect(formatLokiQuery(`rate(0.99,{label=""}[1s])`)).toBe(`rate(\n  0.99,\n  {label=""}\n  [1s]\n)`);
+      expect(formatLokiQuery(`rate({label=""}[1s])by(label)`)).toBe(`rate(\n  {label=""}\n  [1s]\n) by (label)`);
+    });
+
+    // This has been a source of many bugs throughout the development process, so we test it thoroughly.
+    it('handles complex range aggregation expressions', () => {
+      // Selector Range
+      expect(formatLokiQuery(`rate({label=""}[1s])`)).toBe(`rate(\n  {label=""}\n  [1s]\n)`);
+
+      // Selector Range OffsetExpr
+      expect(formatLokiQuery(`rate({label=""}[1s]offset 1h)`)).toBe(`rate(\n  {label=""}\n  [1s] offset 1h\n)`);
+
+      // "(" Selector ")" Range
+      expect(formatLokiQuery(`rate(({label=""})[1s])`)).toBe(`rate(\n  {label=""}\n  [1s]\n)`);
+
+      // "(" Selector ")" Range OffsetExpr
+      expect(formatLokiQuery(`rate(({label=""})[1s]offset 1h)`)).toBe(`rate(\n  {label=""}\n  [1s] offset 1h\n)`);
+
+      // Selector Range UnwrapExpr
+      expect(formatLokiQuery(`rate({label=""}[1s]|unwrap label)`)).toBe(
+        `rate(\n  {label=""}\n  [1s] | unwrap label\n)`
+      );
+
+      // Selector Range OffsetExpr UnwrapExpr
+      expect(formatLokiQuery(`rate({label=""}[1s]offset 1h|unwrap label)`)).toBe(
+        `rate(\n  {label=""}\n  [1s] offset 1h | unwrap label\n)`
+      );
+
+      // "(" Selector ")" Range UnwrapExpr |
+      expect(formatLokiQuery(`rate(({label=""})[1s]|unwrap label)`)).toBe(
+        `rate(\n  {label=""}\n  [1s] | unwrap label\n)`
+      );
+
+      // "(" Selector ")" Range OffsetExpr UnwrapExpr |
+      expect(formatLokiQuery(`rate(({label=""})[1s]offset 1h|unwrap label)`)).toBe(
+        `rate(\n  {label=""}\n  [1s] offset 1h | unwrap label\n)`
+      );
+
+      // Selector UnwrapExpr Range
+      expect(formatLokiQuery(`rate({label=""}|unwrap label[1s])`)).toBe(
+        `rate(\n  {label=""}\n  | unwrap label\n  [1s]\n)`
+      );
+
+      // Selector UnwrapExpr Range OffsetExpr
+      expect(formatLokiQuery(`rate({label=""}|unwrap label[1s]offset 1h)`)).toBe(
+        `rate(\n  {label=""}\n  | unwrap label\n  [1s] offset 1h\n)`
+      );
+
+      // "(" Selector UnwrapExpr ")" Range
+      expect(formatLokiQuery(`rate(({label=""} |unwrap label)[1s])`)).toBe(
+        `rate(\n  {label=""}\n  | unwrap label\n  [1s]\n)`
+      );
+
+      // "(" Selector UnwrapExpr ")" Range OffsetExpr
+      expect(formatLokiQuery(`rate(({label=""} |unwrap label)[1s] offset 1h)`)).toBe(
+        `rate(\n  {label=""}\n  | unwrap label\n  [1s] offset 1h\n)`
+      );
+
+      // Selector PipelineExpr Range
+      expect(formatLokiQuery(`rate({label=""}|=""|logfmt[1s])`)).toBe(
+        `rate(\n  {label=""}\n    |= ""\n    | logfmt\n  [1s]\n)`
+      );
+
+      // Selector PipelineExpr Range OffsetExpr
+      expect(formatLokiQuery(`rate({label=""}|=""|logfmt[1s]offset 1h)`)).toBe(
+        `rate(\n  {label=""}\n    |= ""\n    | logfmt\n  [1s] offset 1h\n)`
+      );
+
+      // "(" Selector PipelineExpr ")" Range
+      expect(formatLokiQuery(`rate(({label=""}|=""|logfmt)[1s])`)).toBe(
+        `rate(\n  {label=""}\n    |= ""\n    | logfmt\n  [1s]\n)`
+      );
+
+      // "(" Selector PipelineExpr ")" Range OffsetExpr
+      expect(formatLokiQuery(`rate(({label=""}|=""|logfmt)[1s]offset 1h)`)).toBe(
+        `rate(\n  {label=""}\n    |= ""\n    | logfmt\n  [1s] offset 1h\n)`
+      );
+
+      // Selector Range PipelineExpr
+      expect(formatLokiQuery(`rate({label=""}[1s]|=""|logfmt)`)).toBe(
+        `rate(\n  {label=""}\n  [1s]\n    |= ""\n    | logfmt\n)`
+      );
+
+      // Selector Range OffsetExpr PipelineExpr
+      expect(formatLokiQuery(`rate({label=""}[1s]offset 1h|=""|logfmt)`)).toBe(
+        `rate(\n  {label=""}\n  [1s] offset 1h\n    |= ""\n    | logfmt\n)`
+      );
+
+      // Selector Range PipelineExpr UnwrapExpr
+      expect(formatLokiQuery(`rate({label=""}[1s]|=""|logfmt|unwrap label)`)).toBe(
+        `rate(\n  {label=""}\n  [1s]\n    |= ""\n    | logfmt\n  | unwrap label\n)`
+      );
+
+      // Selector PipelineExpr UnwrapExpr Range
+      expect(formatLokiQuery(`rate({label=""}|=""|logfmt|unwrap label[1s])`)).toBe(
+        `rate(\n  {label=""}\n    |= ""\n    | logfmt\n  | unwrap label\n  [1s]\n)`
+      );
+
+      // Selector Range OffsetExpr PipelineExpr UnwrapExpr
+      expect(formatLokiQuery(`rate({label=""}[1s]offset 1h|=""|logfmt|unwrap label)`)).toBe(
+        `rate(\n  {label=""}\n  [1s] offset 1h\n    |= ""\n    | logfmt\n  | unwrap label\n)`
+      );
+
+      // "(" LogRangeExpr ")"
+      expect(formatLokiQuery(`(rate({label=""}[1s]))`)).toBe(`(rate(\n  {label=""}\n  [1s]\n))`);
+      expect(formatLokiQuery(`(rate({label=""}[1s]offset 1h|=""|logfmt|unwrap label))`)).toBe(
+        `(rate(\n  {label=""}\n  [1s] offset 1h\n    |= ""\n    | logfmt\n  | unwrap label\n))`
+      );
+    });
+
+    it('handles vector aggregation expressions', () => {
+      expect(formatLokiQuery(`sum(rate({label=""}[1s]))`)).toBe(`sum(\n  rate(\n    {label=""}\n    [1s]\n  )\n)`);
+      expect(formatLokiQuery(`sum by(abc)(rate({label=""}[1s]))`)).toBe(
+        `sum by (abc) (\n  rate(\n    {label=""}\n    [1s]\n  )\n)`
+      );
+      expect(formatLokiQuery(`sum(rate({label=""}[1s]))by(abc)`)).toBe(
+        `sum(\n  rate(\n    {label=""}\n    [1s]\n  )\n) by (abc)`
+      );
+      expect(formatLokiQuery(`sum(0.99, rate({label=""}[1s]))`)).toBe(
+        `sum(\n  0.99,\n  rate(\n    {label=""}\n    [1s]\n  )\n)`
+      );
+      expect(formatLokiQuery(`sum(0.99, rate({label=""}[1s]))by(abc)`)).toBe(
+        `sum(\n  0.99,\n  rate(\n    {label=""}\n    [1s]\n  )\n) by (abc)`
+      );
+      expect(formatLokiQuery(`sum by(abc)(0.99, rate({label=""}[1s]))by(abc)`)).toBe(
+        `sum by (abc) (\n  0.99,\n  rate(\n    {label=""}\n    [1s]\n  )\n)`
+      );
+      // expect(formatLokiQuery(`sum(sum(rate({label=""}[1s])))`)).toBe(
+      //   `sum(\n  sum(\n    rate(\n      {label=""}\n      [1s]\n    )\n  )\n)`
+      // );
+    });
+
+    it('handles binary operator expressions', () => {
+      expect(formatLokiQuery(`rate({label=""}[1s]) + rate({label=""}[5s])`)).toBe(
+        `rate(\n  {label=""}\n  [1s]\n)\n+\nrate(\n  {label=""}\n  [5s]\n)`
+      );
+      expect(formatLokiQuery(`10 + rate({label=""}[1s])`)).toBe(`10\n+\nrate(\n  {label=""}\n  [1s]\n)`);
+      // expect(formatLokiQuery(`1 + 2 + 3`)).toBe(`1\n+\n2\n+\n3`);
+    });
+
+    it('handles literal expressions', () => {
+      expect(formatLokiQuery(`10`)).toBe(`10`);
+      expect(formatLokiQuery(`- 10`)).toBe(`-10`);
+      expect(formatLokiQuery(`+ 10`)).toBe(`+10`);
+    });
+
+    it('handles label replace expressions', () => {
+      expect(formatLokiQuery(`label_replace(rate({label=""}[1s]), "", "", "", "")`)).toBe(
+        `label_replace(\n  rate(\n    {label=""}\n    [1s]\n  ),\n  "",\n  "",\n  "",\n  ""\n)`
+      );
+    });
+
+    it('handles vector expressions', () => {
+      expect(formatLokiQuery(`rate({source="data"}[1s]) or vector( 10 )`)).toBe(
+        `rate(\n  {source="data"}\n  [1s]\n)\nor\nvector(10)`
+      );
+      expect(formatLokiQuery(`vector ( 10 )`)).toBe(`vector(10)`);
+    });
+
+    it('handles metric expressions wrapped in "(" ")"', () => {
+      expect(formatLokiQuery(`(rate({source="data"}[1s]))`)).toBe(`(rate(\n  {source="data"}\n  [1s]\n))`);
+      expect(formatLokiQuery(`(+1 + -1)`)).toBe(`(+1\n+\n-1)`);
+    });
+  });
+});
 
 describe('log expression syntaxnode functions', () => {
   it('formatSelector should return a formatted selector', () => {
