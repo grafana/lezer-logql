@@ -9,10 +9,11 @@ npm install
 ```
 
 ## Development
+
 ### Building
 
 ```
-npm run build 
+npm run build
 ```
 
 ### Testing
