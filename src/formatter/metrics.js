@@ -1,7 +1,7 @@
-import { formatLokiQuery } from "./formatter.js";
-import { needsBrackets, iterateNode, indent, indentMultiline } from "./utils.js";
-import { formatSelector } from "./logs.js";
-import lodash from "lodash";
+import { formatLokiQuery } from './formatter.js';
+import { needsBrackets, iterateNode, indent, indentMultiline } from './utils.js';
+import { formatSelector, formatPipelineExpr, formatLabelFilter } from './logs.js';
+import lodash from 'lodash';
 import {
   Identifier,
   String,
@@ -30,14 +30,14 @@ import {
   Sub,
   LabelReplaceExpr,
   BinOpExpr,
-} from "@grafana/lezer-logql";
+} from '../parser.js';
 
 const { trimEnd } = lodash;
 
 export const formatMetricExpr = (node, query) => {
   const { addBrackets, newNode } = needsBrackets(node, MetricExpr);
   node = newNode;
-  let formatted = "";
+  let formatted = '';
 
   const childNode = node.firstChild;
   switch (childNode && childNode.type.id) {
@@ -66,11 +66,11 @@ export const formatMetricExpr = (node, query) => {
       break;
   }
 
-  return addBrackets ? "(" + formatted + ")" : formatted;
+  return addBrackets ? '(' + formatted + ')' : formatted;
 };
 
 function formatRangeAggregationExpr(node, query) {
-  let response = "";
+  let response = '';
 
   iterateNode(node, [RangeOp, Number, LogRangeExpr, Grouping]).forEach((node) => {
     if (node.parent?.type.id !== RangeAggregationExpr) {
@@ -101,77 +101,75 @@ function formatRangeAggregationExpr(node, query) {
 
 function formatLogRangeExpr(node, query) {
   const nodes = [];
-  let selector = "";
-  let pipeline = "";
-  let range = "";
-  let offset = "";
-  let unwrap = "";
+  let selector = '';
+  let pipeline = '';
+  let range = '';
+  let offset = '';
+  let unwrap = '';
 
-  iterateNode(node, [Selector, Range, OffsetExpr, UnwrapExpr, PipelineExpr]).forEach(
-    (node, _, arr) => {
-      if (node.parent?.type.id !== LogRangeExpr) {
-        return;
-      }
-
-      nodes.push(node);
-
-      switch (node.type.id) {
-        case Selector:
-          let logExpr = query.substring(node.from, node.to);
-          selector += formatSelector({ ...node, from: 0, to: logExpr.length }, logExpr);
-          break;
-
-        case PipelineExpr:
-          pipeline += formatPipelineExpr(node, query);
-          break;
-
-        case Range:
-          range += query.substring(node.from, node.to);
-          break;
-
-        case OffsetExpr:
-          const durationNode = node.getChild(Duration);
-          offset += ` offset ${
-            durationNode ? query.substring(durationNode.from, durationNode.to) : ""
-          }`;
-          break;
-
-        case UnwrapExpr:
-          iterateNode(node, [Identifier, ConvOp, LabelFilter]).forEach((node, _, arr) => {
-            switch (node.type.id) {
-              case Identifier:
-                if (node.parent?.type.id !== UnwrapExpr) {
-                  return;
-                }
-
-                const hasConvOp = arr.find((node) => node.type.id === ConvOp);
-
-                if (hasConvOp) {
-                  return;
-                }
-
-                unwrap += `| unwrap ${query.substring(node.from, node.to)} `;
-                return;
-
-              case ConvOp:
-                const identifierNode = arr.find((node) => node.type.id === Identifier);
-                const identifier = identifierNode
-                  ? query.substring(identifierNode.from, identifierNode.to)
-                  : "";
-                unwrap += `| unwrap ${query.substring(node.from, node.to)}(${identifier}) `;
-                return;
-
-              case LabelFilter:
-                unwrap += formatLabelFilter(node, query);
-                return;
-            }
-          });
-          break;
-      }
+  iterateNode(node, [Selector, Range, OffsetExpr, UnwrapExpr, PipelineExpr]).forEach((node) => {
+    if (node.parent?.type.id !== LogRangeExpr) {
+      return;
     }
-  );
 
-  let response = "";
+    nodes.push(node);
+
+    switch (node.type.id) {
+      case Selector: {
+        let logExpr = query.substring(node.from, node.to);
+        selector += formatSelector({ ...node, from: 0, to: logExpr.length }, logExpr);
+        break;
+      }
+
+      case PipelineExpr:
+        pipeline += formatPipelineExpr(node, query);
+        break;
+
+      case Range:
+        range += query.substring(node.from, node.to);
+        break;
+
+      case OffsetExpr: {
+        const durationNode = node.getChild(Duration);
+        offset += ` offset ${durationNode ? query.substring(durationNode.from, durationNode.to) : ''}`;
+        break;
+      }
+
+      case UnwrapExpr:
+        iterateNode(node, [Identifier, ConvOp, LabelFilter]).forEach((node, _, arr) => {
+          switch (node.type.id) {
+            case Identifier: {
+              if (node.parent?.type.id !== UnwrapExpr) {
+                return;
+              }
+
+              const hasConvOp = arr.find((node) => node.type.id === ConvOp);
+
+              if (hasConvOp) {
+                return;
+              }
+
+              unwrap += `| unwrap ${query.substring(node.from, node.to)} `;
+              return;
+            }
+
+            case ConvOp: {
+              const identifierNode = arr.find((node) => node.type.id === Identifier);
+              const identifier = identifierNode ? query.substring(identifierNode.from, identifierNode.to) : '';
+              unwrap += `| unwrap ${query.substring(node.from, node.to)}(${identifier}) `;
+              return;
+            }
+
+            case LabelFilter:
+              unwrap += formatLabelFilter(node, query);
+              return;
+          }
+        });
+        break;
+    }
+  });
+
+  let response = '';
   nodes.forEach((node, index, array) => {
     const previousNode = array[index - 1];
 
@@ -184,7 +182,7 @@ function formatLogRangeExpr(node, query) {
     }
 
     if (node.type.id === Range) {
-      response += "\n" + indent(1) + range;
+      response += '\n' + indent(1) + range;
     }
 
     if (node.type.id === OffsetExpr) {
@@ -193,18 +191,18 @@ function formatLogRangeExpr(node, query) {
 
     if (node.type.id === UnwrapExpr) {
       if (previousNode?.type.id !== OffsetExpr && previousNode?.type.id !== Range) {
-        response += "\n" + indent(1) + unwrap;
+        response += '\n' + indent(1) + unwrap;
       } else {
-        response += " " + unwrap;
+        response += ' ' + unwrap;
       }
     }
   });
 
-  return (response += "\n)");
+  return (response += '\n)');
 }
 
 function formatGrouping(node, query) {
-  let response = "";
+  let response = '';
 
   const labels = iterateNode(node, [Identifier]).map((node) => {
     return query.substring(node.from, node.to);
@@ -217,11 +215,11 @@ function formatGrouping(node, query) {
 
     switch (node.type.id) {
       case By:
-        response = ` by (${labels.join(", ")}) `;
+        response = ` by (${labels.join(', ')}) `;
         break;
 
       case Without:
-        response = ` without (${labels.join(", ")}) `;
+        response = ` without (${labels.join(', ')}) `;
         break;
     }
   });
@@ -230,7 +228,7 @@ function formatGrouping(node, query) {
 }
 
 function formatVectorAggregationExpr(node, query) {
-  let response = "";
+  let response = '';
 
   iterateNode(node, [VectorOp, Number, MetricExpr, Grouping]).forEach((node, _, arr) => {
     if (node.parent?.type.id !== VectorAggregationExpr) {
@@ -247,16 +245,15 @@ function formatVectorAggregationExpr(node, query) {
         response += `${indent(1) + query.substring(node.from, node.to)},\n`;
         break;
 
-      case MetricExpr:
-        const hasNumber = arr.find(
-          (node) => node.type.id === Number && node.parent?.type.id === VectorAggregationExpr
-        );
-        response += hasNumber ? "" : "(\n";
+      case MetricExpr: {
+        const hasNumber = arr.find((node) => node.type.id === Number && node.parent?.type.id === VectorAggregationExpr);
+        response += hasNumber ? '' : '(\n';
 
         const metricExpr = query.substring(node.from, node.to);
         response += indentMultiline(formatLokiQuery(metricExpr), 1);
-        response += "\n)";
+        response += '\n)';
         break;
+      }
 
       case Grouping:
         response += formatGrouping(node, query);
@@ -278,7 +275,7 @@ function formatBinOpExpr(node, query) {
     return formatLokiQuery(query.substring(node.from, node.to));
   });
 
-  return leftExpr + "\n" + operator + "\n" + rightExpr;
+  return leftExpr + '\n' + operator + '\n' + rightExpr;
 }
 
 function formatLiteralExpr(node, query) {
@@ -288,7 +285,7 @@ function formatLiteralExpr(node, query) {
   const numberNode = node.getChild(Number);
 
   if (!numberNode) {
-    return "";
+    return '';
   }
 
   if (addNode) {
@@ -303,7 +300,7 @@ function formatLiteralExpr(node, query) {
 }
 
 function formatLabelReplaceExpr(node, query) {
-  let response = "label_replace(\n";
+  let response = 'label_replace(\n';
 
   iterateNode(node, [MetricExpr, String]).forEach((node) => {
     if (node.parent?.type.id !== LabelReplaceExpr) {
@@ -311,13 +308,13 @@ function formatLabelReplaceExpr(node, query) {
     }
 
     if (node.type.id === MetricExpr) {
-      response += indentMultiline(formatLokiQuery(query.substring(node.from, node.to)), 1) + ",\n";
+      response += indentMultiline(formatLokiQuery(query.substring(node.from, node.to)), 1) + ',\n';
     } else {
-      response += indent(1) + query.substring(node.from, node.to) + ",\n";
+      response += indent(1) + query.substring(node.from, node.to) + ',\n';
     }
   });
 
-  return trimEnd(response, ",\n") + "\n)";
+  return trimEnd(response, ',\n') + '\n)';
 }
 
 function formatVectorExpr(node, query) {
@@ -325,7 +322,7 @@ function formatVectorExpr(node, query) {
   const numberNode = node.getChild(Number);
 
   if (!numberNode) {
-    return "";
+    return '';
   }
 
   return `vector(${query.substring(numberNode.from, numberNode.to)})`;

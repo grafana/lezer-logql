@@ -1,15 +1,15 @@
 export function indent(level) {
-  return "  ".repeat(level);
+  return '  '.repeat(level);
 }
 
 export function indentMultiline(block, level) {
-  const lines = block.split("\n");
-  return lines.map((line) => indent(level) + line).join("\n");
+  const lines = block.split('\n');
+  return lines.map((line) => indent(level) + line).join('\n');
 }
 
 export function trimMultiline(block) {
-  const lines = block.split("\n");
-  return lines.map((line) => line.trimEnd()).join("\n");
+  const lines = block.split('\n');
+  return lines.map((line) => line.trimEnd()).join('\n');
 }
 
 export function needsBrackets(node, queryType) {

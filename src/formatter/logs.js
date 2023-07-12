@@ -1,5 +1,5 @@
-import { needsBrackets, iterateNode, buildResponse } from "./utils.js";
-import lodash from "lodash";
+import { needsBrackets, iterateNode, buildResponse } from './utils.js';
+import lodash from 'lodash';
 import {
   Identifier,
   String,
@@ -30,7 +30,7 @@ import {
   LogExpr,
   Selector,
   PipelineExpr,
-} from "@grafana/lezer-logql";
+} from '../parser.js';
 
 const { trimEnd } = lodash;
 
@@ -39,7 +39,7 @@ export const formatLogExpr = (node, query) => {
   node = newNode;
 
   const tree = parser.parse(query.substring(node.from, node.to));
-  let formatted = "";
+  let formatted = '';
 
   tree.iterate({
     enter: (ref) => {
@@ -57,14 +57,14 @@ export const formatLogExpr = (node, query) => {
     },
   });
 
-  return addBrackets ? "(" + formatted + ")" : formatted;
+  return addBrackets ? '(' + formatted + ')' : formatted;
 };
 
 export function formatSelector(node, query) {
   const selector = query.substring(node.from, node.to);
   const subtree = parser.parse(selector);
   const labelNodes = [];
-  let response = "";
+  let response = '';
 
   subtree.iterate({
     enter: (ref) => {
@@ -109,10 +109,10 @@ export function formatSelector(node, query) {
     response += `${label}${operator}${value}, `;
   });
 
-  return "{" + trimEnd(response, ", ") + "}";
+  return '{' + trimEnd(response, ', ') + '}';
 }
 
-function formatPipelineExpr(node, query) {
+export function formatPipelineExpr(node, query) {
   const pipelineExprNodes = [
     LineFilter,
     LabelParser,
@@ -124,7 +124,7 @@ function formatPipelineExpr(node, query) {
     DecolorizeExpr,
   ];
   let lastPipelineType;
-  let response = "";
+  let response = '';
 
   iterateNode(node, pipelineExprNodes).forEach((node) => {
     switch (node.type.id) {
@@ -139,11 +139,7 @@ function formatPipelineExpr(node, query) {
         break;
 
       case JsonExpressionParser:
-        response += buildResponse(
-          JsonExpressionParser,
-          lastPipelineType,
-          formatJsonExpressionParser(node, query)
-        );
+        response += buildResponse(JsonExpressionParser, lastPipelineType, formatJsonExpressionParser(node, query));
         lastPipelineType = JsonExpressionParser;
         break;
 
@@ -153,38 +149,22 @@ function formatPipelineExpr(node, query) {
         break;
 
       case LineFormatExpr:
-        response += buildResponse(
-          LineFormatExpr,
-          lastPipelineType,
-          formatLineFormatExpr(node, query)
-        );
+        response += buildResponse(LineFormatExpr, lastPipelineType, formatLineFormatExpr(node, query));
         lastPipelineType = LineFormatExpr;
         break;
 
       case LabelFormatExpr:
-        response += buildResponse(
-          LabelFormatExpr,
-          lastPipelineType,
-          formatLabelFormatExpr(node, query)
-        );
+        response += buildResponse(LabelFormatExpr, lastPipelineType, formatLabelFormatExpr(node, query));
         lastPipelineType = LabelFormatExpr;
         break;
 
       case DistinctFilter:
-        response += buildResponse(
-          DistinctFilter,
-          lastPipelineType,
-          formatDistinctFilter(node, query)
-        );
+        response += buildResponse(DistinctFilter, lastPipelineType, formatDistinctFilter(node, query));
         lastPipelineType = DistinctFilter;
         break;
 
       case DecolorizeExpr:
-        response += buildResponse(
-          DecolorizeExpr,
-          lastPipelineType,
-          formatDecolorizeExpr(node, query)
-        );
+        response += buildResponse(DecolorizeExpr, lastPipelineType, formatDecolorizeExpr());
         lastPipelineType = DecolorizeExpr;
         break;
     }
@@ -226,7 +206,7 @@ function formatLabelParser(node, query) {
 
 function formatJsonExpressionParser(node, query) {
   const jsonExpressionNodes = iterateNode(node, [JsonExpression]);
-  let response = "";
+  let response = '';
 
   jsonExpressionNodes.forEach((node) => {
     const identifierNode = node.getChild(Identifier);
@@ -238,10 +218,10 @@ function formatJsonExpressionParser(node, query) {
     response += `${identifier}=${value}, `;
   });
 
-  return `| json ${trimEnd(response, ", ")}`;
+  return `| json ${trimEnd(response, ', ')}`;
 }
 
-function formatLabelFilter(node, query) {
+export function formatLabelFilter(node, query) {
   const selectedFilter =
     node.getChild(Matcher) ||
     node.getChild(IpLabelFilter) ||
@@ -250,7 +230,7 @@ function formatLabelFilter(node, query) {
     node.getChild(UnitFilter)?.getChild(BytesFilter);
 
   if (!selectedFilter) {
-    return "";
+    return '';
   }
 
   const selectedFilterType = selectedFilter.type.id;
@@ -288,7 +268,7 @@ function formatLineFormatExpr(node, query) {
 
 function formatLabelFormatExpr(node, query) {
   const labelFormatMatcherNodes = iterateNode(node, [LabelFormatMatcher]);
-  let response = "| label_format ";
+  let response = '| label_format ';
 
   labelFormatMatcherNodes.forEach((labelFormatMatcherNode) => {
     let identifierNode;
@@ -307,17 +287,15 @@ function formatLabelFormatExpr(node, query) {
     response += `${identifier}=${value}, `;
   });
 
-  return trimEnd(response, ", ");
+  return trimEnd(response, ', ');
 }
 
 function formatDistinctFilter(node, query) {
   const identifierNodes = iterateNode(node, [Identifier]);
-  const identifiers = identifierNodes.map((identifierNode) =>
-    query.substring(identifierNode.from, identifierNode.to)
-  );
-  return `| distinct ${identifiers.join(", ")}`;
+  const identifiers = identifierNodes.map((identifierNode) => query.substring(identifierNode.from, identifierNode.to));
+  return `| distinct ${identifiers.join(', ')}`;
 }
 
-function formatDecolorizeExpr(node, query) {
+function formatDecolorizeExpr() {
   return `| decolorize`;
 }

@@ -1,1 +1,1 @@
-export { formatLokiQuery } from "./formatter/formatter.js";
+export { formatLokiQuery } from './formatter/formatter.js';

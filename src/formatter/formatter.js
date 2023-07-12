@@ -1,14 +1,14 @@
-import { MetricExpr, LogExpr, parser, Expr, BinOpExpr } from "@grafana/lezer-logql";
-import { formatMetricExpr } from "./metrics.js";
-import { formatLogExpr } from "./logs.js";
-import { trimMultiline } from "./utils.js";
+import { MetricExpr, LogExpr, parser, Expr, BinOpExpr } from '../parser.js';
+import { formatMetricExpr } from './metrics.js';
+import { formatLogExpr } from './logs.js';
+import { trimMultiline } from './utils.js';
 
 /**
  * @experimental This feature is subject to change or removal in future versions.
  */
 export const formatLokiQuery = (query) => {
   const tree = parser.parse(query);
-  let formatted = "";
+  let formatted = '';
 
   tree.iterate({
     enter: (ref) => {
