@@ -173,7 +173,7 @@ export function formatPipelineExpr(node, query) {
   return response;
 }
 
-function formatLineFilter(node, query) {
+export function formatLineFilter(node, query) {
   const filterNode = node.getChild(Filter);
   const filterOperationNode = node.getChild(FilterOp);
   const stringNode = node.getChild(String);
@@ -187,7 +187,7 @@ function formatLineFilter(node, query) {
   return `${filter} ${string}`;
 }
 
-function formatLabelParser(node, query) {
+export function formatLabelParser(node, query) {
   const hasString = node.getChild(String);
 
   if (hasString) {
@@ -204,7 +204,7 @@ function formatLabelParser(node, query) {
   return `| ${labelParser}`;
 }
 
-function formatJsonExpressionParser(node, query) {
+export function formatJsonExpressionParser(node, query) {
   const jsonExpressionNodes = iterateNode(node, [JsonExpression]);
   let response = '';
 
@@ -260,13 +260,13 @@ export function formatLabelFilter(node, query) {
   return `| ${identifier}${operator}${value}`;
 }
 
-function formatLineFormatExpr(node, query) {
+export function formatLineFormatExpr(node, query) {
   const stringNode = node.getChild(String);
   const string = stringNode && query.substring(stringNode.from, stringNode.to);
   return `| line_format ${string}`;
 }
 
-function formatLabelFormatExpr(node, query) {
+export function formatLabelFormatExpr(node, query) {
   const labelFormatMatcherNodes = iterateNode(node, [LabelFormatMatcher]);
   let response = '| label_format ';
 
@@ -290,12 +290,12 @@ function formatLabelFormatExpr(node, query) {
   return trimEnd(response, ', ');
 }
 
-function formatDistinctFilter(node, query) {
+export function formatDistinctFilter(node, query) {
   const identifierNodes = iterateNode(node, [Identifier]);
   const identifiers = identifierNodes.map((identifierNode) => query.substring(identifierNode.from, identifierNode.to));
   return `| distinct ${identifiers.join(', ')}`;
 }
 
-function formatDecolorizeExpr() {
+export function formatDecolorizeExpr() {
   return `| decolorize`;
 }

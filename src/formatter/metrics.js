@@ -69,7 +69,7 @@ export const formatMetricExpr = (node, query) => {
   return addBrackets ? '(' + formatted + ')' : formatted;
 };
 
-function formatRangeAggregationExpr(node, query) {
+export function formatRangeAggregationExpr(node, query) {
   let response = '';
 
   iterateNode(node, [RangeOp, Number, LogRangeExpr, Grouping]).forEach((node) => {
@@ -99,7 +99,7 @@ function formatRangeAggregationExpr(node, query) {
   return response;
 }
 
-function formatLogRangeExpr(node, query) {
+export function formatLogRangeExpr(node, query) {
   const nodes = [];
   let selector = '';
   let pipeline = '';
@@ -201,7 +201,7 @@ function formatLogRangeExpr(node, query) {
   return (response += '\n)');
 }
 
-function formatGrouping(node, query) {
+export function formatGrouping(node, query) {
   let response = '';
 
   const labels = iterateNode(node, [Identifier]).map((node) => {
@@ -227,7 +227,7 @@ function formatGrouping(node, query) {
   return response;
 }
 
-function formatVectorAggregationExpr(node, query) {
+export function formatVectorAggregationExpr(node, query) {
   let response = '';
 
   iterateNode(node, [VectorOp, Number, MetricExpr, Grouping]).forEach((node, _, arr) => {
@@ -264,7 +264,7 @@ function formatVectorAggregationExpr(node, query) {
   return response;
 }
 
-function formatBinOpExpr(node, query) {
+export function formatBinOpExpr(node, query) {
   let operator;
 
   const [leftExpr, rightExpr] = iterateNode(node, [Expr]).map((node, idx) => {
@@ -278,7 +278,7 @@ function formatBinOpExpr(node, query) {
   return leftExpr + '\n' + operator + '\n' + rightExpr;
 }
 
-function formatLiteralExpr(node, query) {
+export function formatLiteralExpr(node, query) {
   node = node.getChild(LiteralExpr) ?? node;
   const addNode = node.getChild(Add);
   const subNode = node.getChild(Sub);
@@ -299,7 +299,7 @@ function formatLiteralExpr(node, query) {
   return query.substring(numberNode.from, numberNode.to);
 }
 
-function formatLabelReplaceExpr(node, query) {
+export function formatLabelReplaceExpr(node, query) {
   let response = 'label_replace(\n';
 
   iterateNode(node, [MetricExpr, String]).forEach((node) => {
@@ -317,7 +317,7 @@ function formatLabelReplaceExpr(node, query) {
   return trimEnd(response, ',\n') + '\n)';
 }
 
-function formatVectorExpr(node, query) {
+export function formatVectorExpr(node, query) {
   node = node.getChild(VectorExpr) ?? node;
   const numberNode = node.getChild(Number);
 
