@@ -91,13 +91,19 @@ describe('formatLokiQuery', () => {
       expect(formatLokiQuery(`{label=""} | label=10s`)).toBe(`{label=""}\n  | label=10s`);
       expect(formatLokiQuery(`{label=""} | label=1GB`)).toBe(`{label=""}\n  | label=1GB`);
       expect(formatLokiQuery(`{label=""} | label=42`)).toBe(`{label=""}\n  | label=42`);
+
+      // This is a missing implementation / bug, to be fixed.
       // expect(formatLokiQuery(`{label=""} | labelA="A" and labelB="B"`)).toBe(
       //   `{label=""}\n  | labelA="A" and labelB="B"`
       // );
+
+      // This is a missing implementation / bug, to be fixed.
       // expect(formatLokiQuery(`{label=""} | labelA="A" or labelB="B"`)).toBe(
       //   `{label=""}\n  | labelA="A" or labelB="B"`
       // );
-      // expect(formatLokiQuery(`{label=""} | labelA="A", labelB="B"`)).toBe(`{label=""}\n  | labelA="A", d labelB="B"`);
+
+      /// This is a missing implementation / bug, to be fixed.
+      // expect(formatLokiQuery(`{label=""} | labelA="A", labelB="B"`)).toBe(`{label=""}\n  | labelA="A", labelB="B"`);
     });
 
     it('handles line format expressions', () => {
@@ -131,6 +137,8 @@ describe('formatLokiQuery', () => {
 
     it('handles log expressions wrapped in "(" ")"', () => {
       expect(formatLokiQuery(`({labelB="B",labelA="A"})`)).toBe(`({labelA="A", labelB="B"})`);
+
+      // This is a missing implementation / bug, to be fixed.
       // expect(formatLokiQuery(`({label=""}|=""|json|decolorize)`)).toBe(`({label=""}\n  |= ""\n  | json\n  | decolorize)`);
     });
   });
@@ -265,6 +273,8 @@ describe('formatLokiQuery', () => {
       expect(formatLokiQuery(`sum by(abc)(0.99, rate({label=""}[1s]))by(abc)`)).toBe(
         `sum by (abc) (\n  0.99,\n  rate(\n    {label=""}\n    [1s]\n  )\n)`
       );
+
+      // This is a missing implementation / bug, to be fixed.
       // expect(formatLokiQuery(`sum(sum(rate({label=""}[1s])))`)).toBe(
       //   `sum(\n  sum(\n    rate(\n      {label=""}\n      [1s]\n    )\n  )\n)`
       // );
