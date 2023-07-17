@@ -35,11 +35,11 @@ jobs:
 
       - name: Install dependencies
         if: steps.version_check.outputs.changed == 'true'
-        run: yarn
+        run: npm install --ignore-scripts
 
       - name: Build library
         if: steps.version_check.outputs.changed == 'true'
-        run: yarn build
+        run: npm run build
 
       - name: Publish package to NPM
         if: steps.version_check.outputs.changed == 'true'
