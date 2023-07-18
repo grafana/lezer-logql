@@ -1,6 +1,6 @@
 {
   "name": "@grafana/lezer-logql",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Grafana Loki logQL lezer grammar",
   "main": "index.cjs",
   "type": "module",
@@ -17,7 +17,7 @@
     "test": "jest",
     "build:test": "npm run build && npm run test",
     "pre-commit": "lint-staged",
-    "prepare": "husky install"
+    "postinstall": "husky install"
   },
   "devDependencies": {
     "@babel/core": "^7.22.8",
