@@ -1,6 +1,5 @@
-import { formatLokiQuery } from './formatter.js';
-import { needsBrackets, iterateNode, indent, indentMultiline } from './utils.js';
-import { formatSelector, formatPipelineExpr, formatLabelFilter } from './logs.js';
+import { needsBrackets, iterateNode, indent, indentMultiline, getNodeFromQuery, isLogsQuery } from './utils.js';
+import { formatSelector, formatPipelineExpr, formatLabelFilter, formatLogExpr } from './logs.js';
 import lodash from 'lodash';
 import {
   Identifier,
@@ -31,6 +30,7 @@ import {
   LabelReplaceExpr,
   BinOpExpr,
 } from '../parser.js';
+import { LogExpr } from '../parser.terms.js';
 
 const { trimEnd } = lodash;
 
@@ -250,7 +250,8 @@ export function formatVectorAggregationExpr(node, query) {
         response += hasNumber ? '' : '(\n';
 
         const metricExpr = query.substring(node.from, node.to);
-        response += indentMultiline(formatLokiQuery(metricExpr), 1);
+        const metricNode = getNodeFromQuery(metricExpr, MetricExpr);
+        response += indentMultiline(formatMetricExpr(metricNode, metricExpr), 1);
         response += '\n)';
         break;
       }
@@ -272,7 +273,16 @@ export function formatBinOpExpr(node, query) {
       operator = query.substring(node.nextSibling?.from ?? 0, node.nextSibling?.to);
     }
 
-    return formatLokiQuery(query.substring(node.from, node.to));
+    const expr = query.substring(node.from, node.to);
+    let expressionNode;
+
+    if (isLogsQuery(expr)) {
+      expressionNode = getNodeFromQuery(expr, LogExpr);
+      return formatLogExpr(expressionNode, expr);
+    } else {
+      expressionNode = getNodeFromQuery(expr, MetricExpr);
+      return formatMetricExpr(expressionNode, expr);
+    }
   });
 
   return leftExpr + '\n' + operator + '\n' + rightExpr;
@@ -308,7 +318,9 @@ export function formatLabelReplaceExpr(node, query) {
     }
 
     if (node.type.id === MetricExpr) {
-      response += indentMultiline(formatLokiQuery(query.substring(node.from, node.to)), 1) + ',\n';
+      const metricExpr = query.substring(node.from, node.to);
+      const metricNode = getNodeFromQuery(metricExpr, MetricExpr);
+      response += indentMultiline(formatMetricExpr(metricNode, metricExpr), 1) + ',\n';
     } else {
       response += indent(1) + query.substring(node.from, node.to) + ',\n';
     }

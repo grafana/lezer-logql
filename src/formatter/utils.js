@@ -1,3 +1,26 @@
+import { parser } from '../parser.js';
+import { MetricExpr } from '../parser.terms.js';
+
+export function getNodeFromQuery(query, nodeType) {
+  const nodes = [];
+  const tree = parser.parse(query);
+  tree.iterate({
+    enter: (node) => {
+      if (nodeType === undefined || nodeType === node.type.id) {
+        nodes.push(node.node);
+      }
+    },
+  });
+  return nodes[0];
+}
+
+export function isLogsQuery(query) {
+  if (getNodeFromQuery(query, MetricExpr)) {
+    return false;
+  }
+  return true;
+}
+
 export function indent(level) {
   return '  '.repeat(level);
 }
