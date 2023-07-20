@@ -16,8 +16,7 @@
     "build": "bash ./build.sh",
     "test": "jest",
     "build:test": "npm run build && npm run test",
-    "pre-commit": "lint-staged",
-    "prepare": "node_modules/.bin/husky install"
+    "pre-commit": "lint-staged"
   },
   "devDependencies": {
     "@babel/core": "^7.22.8",
