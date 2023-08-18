@@ -33,6 +33,7 @@ import {
   Distinct,
   Decolorize,
   Drop,
+  Keep,
 } from './parser.terms.js';
 
 const keywordTokens = {
@@ -56,6 +57,7 @@ const keywordTokens = {
   distinct: Distinct,
   decolorize: Decolorize,
   drop: Drop,
+  keep: Keep,
 };
 
 export const specializeIdentifier = (value) => {
