@@ -445,3 +445,35 @@ rate(({label=""}) [1s] offset 1h | unwrap label)
 ==>
 
 LogQL(Expr(MetricExpr(RangeAggregationExpr(RangeOp(Rate), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Range(Duration), OffsetExpr(Offset, Duration), UnwrapExpr(Pipe, Unwrap, Identifier))))))
+
+# Drop with one label
+
+{label=""} | drop name
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, DropLabelsExpr(Drop, DropLabels(DropLabel(Identifier))))))))
+
+# Drop with multiple labels and matchers
+
+{label=""} | drop name, other_name, some_name="some_value"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, DropLabelsExpr(Drop, DropLabels(DropLabels(DropLabels(DropLabel(Identifier)), DropLabel(Identifier)), DropLabel(Matcher(Identifier, Eq, String)))))))))
+
+# Keep with one label
+
+{label=""} | keep name
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, KeepLabelsExpr(Keep, KeepLabels(KeepLabel(Identifier))))))))
+
+# Keep with multiple labels and matchers
+
+{label=""} | keep name, other_name, some_name="some_value"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, KeepLabelsExpr(Keep, KeepLabels(KeepLabels(KeepLabels(KeepLabel(Identifier)), KeepLabel(Identifier)), KeepLabel(Matcher(Identifier, Eq, String)))))))))
