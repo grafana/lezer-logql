@@ -70,3 +70,11 @@ export function buildResponse(pipelineType, lastPipelineType, formattedNode) {
 
   return `\n${indent(1)}${formattedNode}`;
 }
+
+export function trimEnd(input, charactersToTrim) {
+  let endIndex = input.length - 1;
+  while (endIndex >= 0 && charactersToTrim.includes(input[endIndex])) {
+    endIndex--;
+  }
+  return input.substring(0, endIndex + 1);
+}
