@@ -1,6 +1,13 @@
-import { needsBrackets, iterateNode, indent, indentMultiline, getNodeFromQuery, isLogsQuery } from './utils.js';
+import {
+  needsBrackets,
+  iterateNode,
+  indent,
+  indentMultiline,
+  getNodeFromQuery,
+  isLogsQuery,
+  trimEnd,
+} from './utils.js';
 import { formatSelector, formatPipelineExpr, formatLabelFilter, formatLogExpr } from './logs.js';
-import lodash from 'lodash';
 import {
   Identifier,
   String,
@@ -31,8 +38,6 @@ import {
   BinOpExpr,
 } from '../parser.js';
 import { LogExpr } from '../parser.terms.js';
-
-const { trimEnd } = lodash;
 
 export const formatMetricExpr = (node, query) => {
   const { addBrackets, newNode } = needsBrackets(node, MetricExpr);

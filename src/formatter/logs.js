@@ -1,5 +1,4 @@
-import { needsBrackets, iterateNode, buildResponse } from './utils.js';
-import lodash from 'lodash';
+import { needsBrackets, iterateNode, buildResponse, trimEnd } from './utils.js';
 import {
   Identifier,
   String,
@@ -31,8 +30,6 @@ import {
   Selector,
   PipelineExpr,
 } from '../parser.js';
-
-const { trimEnd } = lodash;
 
 export const formatLogExpr = (node, query) => {
   const { addBrackets, newNode } = needsBrackets(node, LogExpr);
