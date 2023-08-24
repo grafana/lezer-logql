@@ -13,7 +13,7 @@ import {
   Filter,
   Regexp,
   Pattern,
-  JsonExpression,
+  LabelExtractionExpression,
   IpLabelFilter,
   UnitFilter,
   NumberFilter,
@@ -202,7 +202,7 @@ export function formatLabelParser(node, query) {
 }
 
 export function formatJsonExpressionParser(node, query) {
-  const jsonExpressionNodes = iterateNode(node, [JsonExpression]);
+  const jsonExpressionNodes = iterateNode(node, [LabelExtractionExpression]);
   let response = '';
 
   jsonExpressionNodes.forEach((node) => {
