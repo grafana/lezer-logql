@@ -159,8 +159,8 @@ LabelExtractionExpressionList {
 }
 
 LogfmtParserFlags {
-  String |
-  LogfmtParserFlags String
+  ParserFlag |
+  LogfmtParserFlags ParserFlag
 }
 
 DistinctLabel {
@@ -412,6 +412,10 @@ ConvOp {
   String {
     '"' (![\\\n"] | "\\" _)* '"' |
     "`" ![`]* "`"
+  }
+
+  ParserFlag {
+    "--strict" | "--keep-empty"
   }
 
   Number {
