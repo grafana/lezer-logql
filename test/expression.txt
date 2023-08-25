@@ -159,6 +159,30 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt))))))
 
+# Log query with logfmt parser and a flag
+
+{job="loki"} | logfmt --strict
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt, LogfmtParserFlags(ParserFlag)))))))
+
+# Log query with logfmt parser and flags
+
+{job="loki"} | logfmt --strict --keep-empty
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt, LogfmtParserFlags(LogfmtParserFlags(ParserFlag), ParserFlag)))))))
+
+# Log query with logfmt parser, flags, and labels argument
+
+{job="loki"} | logfmt --strict --keep-empty label="value", label2
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, LogfmtExpressionParser(Logfmt, LogfmtParserFlags(LogfmtParserFlags(ParserFlag), ParserFlag), LabelExtractionExpressionList(LabelExtractionExpressionList(LabelExtractionExpression(Identifier, Eq, String)), LabelExtractionExpression(Identifier))))))))
+
 # Log query with regexp parser
 
 {job="loki"} | regexp "regexp"
