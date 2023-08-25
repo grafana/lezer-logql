@@ -29,8 +29,8 @@ import {
   LogExpr,
   Selector,
   PipelineExpr,
+  LogfmtParser,
 } from '../parser.js';
-import { LogfmtParser } from '../parser.terms.js';
 
 export const formatLogExpr = (node, query) => {
   const { addBrackets, newNode } = needsBrackets(node, LogExpr);
