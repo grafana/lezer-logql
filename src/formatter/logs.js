@@ -30,6 +30,7 @@ import {
   Selector,
   PipelineExpr,
 } from '../parser.js';
+import { LogfmtParser } from '../parser.terms.js';
 
 export const formatLogExpr = (node, query) => {
   const { addBrackets, newNode } = needsBrackets(node, LogExpr);
@@ -113,6 +114,7 @@ export function formatPipelineExpr(node, query) {
   const pipelineExprNodes = [
     LineFilter,
     LabelParser,
+    LogfmtParser,
     LabelFilter,
     JsonExpressionParser,
     LineFormatExpr,
@@ -133,6 +135,11 @@ export function formatPipelineExpr(node, query) {
       case LabelParser:
         response += buildResponse(LabelParser, lastPipelineType, formatLabelParser(node, query));
         lastPipelineType = LabelParser;
+        break;
+
+      case LogfmtParser:
+        response += buildResponse(LogfmtParser, lastPipelineType, formatLabelParser(node, query));
+        lastPipelineType = LogfmtParser;
         break;
 
       case JsonExpressionParser:
