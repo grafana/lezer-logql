@@ -13,7 +13,7 @@ import {
   Filter,
   Regexp,
   Pattern,
-  JsonExpression,
+  LabelExtractionExpression,
   IpLabelFilter,
   UnitFilter,
   NumberFilter,
@@ -29,6 +29,7 @@ import {
   LogExpr,
   Selector,
   PipelineExpr,
+  LogfmtParser,
 } from '../parser.js';
 
 export const formatLogExpr = (node, query) => {
@@ -113,6 +114,7 @@ export function formatPipelineExpr(node, query) {
   const pipelineExprNodes = [
     LineFilter,
     LabelParser,
+    LogfmtParser,
     LabelFilter,
     JsonExpressionParser,
     LineFormatExpr,
@@ -133,6 +135,11 @@ export function formatPipelineExpr(node, query) {
       case LabelParser:
         response += buildResponse(LabelParser, lastPipelineType, formatLabelParser(node, query));
         lastPipelineType = LabelParser;
+        break;
+
+      case LogfmtParser:
+        response += buildResponse(LogfmtParser, lastPipelineType, formatLabelParser(node, query));
+        lastPipelineType = LogfmtParser;
         break;
 
       case JsonExpressionParser:
@@ -202,7 +209,7 @@ export function formatLabelParser(node, query) {
 }
 
 export function formatJsonExpressionParser(node, query) {
-  const jsonExpressionNodes = iterateNode(node, [JsonExpression]);
+  const jsonExpressionNodes = iterateNode(node, [LabelExtractionExpression]);
   let response = '';
 
   jsonExpressionNodes.forEach((node) => {
