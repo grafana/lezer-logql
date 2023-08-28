@@ -36,10 +36,8 @@ Matchers {
 
 PipelineStage {
   LineFilters | 
-  Pipe LogfmtParser |
   Pipe LabelParser |
   Pipe JsonExpressionParser |
-  Pipe LogfmtExpressionParser |
   Pipe LabelFilter |
   Pipe LineFormatExpr |
   Pipe LabelFormatExpr |
@@ -79,23 +77,14 @@ FilterOp {
 
 LabelParser {
   Json |
+  Logfmt |
   Regexp String |
   Unpack |
   Pattern String
 }
 
 JsonExpressionParser {
-  Json LabelExtractionExpressionList
-}
-
-LogfmtParser {
-  Logfmt |
-  Logfmt LogfmtParserFlags
-}
-
-LogfmtExpressionParser {
-  Logfmt LogfmtParserFlags LabelExtractionExpressionList |
-  Logfmt LabelExtractionExpressionList
+  Json JsonExpressionList
 }
 
 DistinctFilter {
@@ -153,14 +142,9 @@ KeepLabelsExpr {
   Keep KeepLabels
 }
 
-LabelExtractionExpressionList {
-  LabelExtractionExpression |
-  LabelExtractionExpressionList !and "," LabelExtractionExpression
-}
-
-LogfmtParserFlags {
-  ParserFlag |
-  LogfmtParserFlags ParserFlag
+JsonExpressionList {
+  JsonExpression |
+  JsonExpressionList !and "," JsonExpression
 }
 
 DistinctLabel {
@@ -198,9 +182,8 @@ LabelFormatMatcher {
   Identifier !eql Eq String
 }
 
-LabelExtractionExpression {
-  Identifier !eql Eq String |
-  Identifier
+JsonExpression {
+  Identifier !eql Eq String
 }
 
 DurationFilter {
@@ -412,10 +395,6 @@ ConvOp {
   String {
     '"' (![\\\n"] | "\\" _)* '"' |
     "`" ![`]* "`"
-  }
-
-  ParserFlag {
-    "--strict" | "--keep-empty"
   }
 
   Number {
