@@ -41,7 +41,6 @@ PipelineStage {
   Pipe LabelFilter |
   Pipe LineFormatExpr |
   Pipe LabelFormatExpr |
-  Pipe DistinctFilter |
   Pipe DecolorizeExpr |
   Pipe DropLabelsExpr |
   Pipe KeepLabelsExpr
@@ -85,10 +84,6 @@ LabelParser {
 
 JsonExpressionParser {
   Json JsonExpressionList
-}
-
-DistinctFilter {
-  Distinct DistinctLabel
 }
 
 LabelFilter {
@@ -145,11 +140,6 @@ KeepLabelsExpr {
 JsonExpressionList {
   JsonExpression |
   JsonExpressionList !and "," JsonExpression
-}
-
-DistinctLabel {
-  Identifier |
-  DistinctLabel !and "," Identifier
 }
 
 IpLabelFilter {
@@ -489,7 +479,6 @@ ConvOp {
   Ignoring,
   GroupLeft,
   GroupRight,
-  Distinct,
   Decolorize,
   Drop,
   Keep

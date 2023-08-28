@@ -25,7 +25,6 @@ import {
   LabelFormatMatcher,
   FilterOp,
   DecolorizeExpr,
-  DistinctFilter,
   LogExpr,
   Selector,
   PipelineExpr,
@@ -117,7 +116,6 @@ export function formatPipelineExpr(node, query) {
     JsonExpressionParser,
     LineFormatExpr,
     LabelFormatExpr,
-    DistinctFilter,
     DecolorizeExpr,
   ];
   let lastPipelineType;
@@ -153,11 +151,6 @@ export function formatPipelineExpr(node, query) {
       case LabelFormatExpr:
         response += buildResponse(LabelFormatExpr, lastPipelineType, formatLabelFormatExpr(node, query));
         lastPipelineType = LabelFormatExpr;
-        break;
-
-      case DistinctFilter:
-        response += buildResponse(DistinctFilter, lastPipelineType, formatDistinctFilter(node, query));
-        lastPipelineType = DistinctFilter;
         break;
 
       case DecolorizeExpr:
@@ -285,12 +278,6 @@ export function formatLabelFormatExpr(node, query) {
   });
 
   return trimEnd(response, ', ');
-}
-
-export function formatDistinctFilter(node, query) {
-  const identifierNodes = iterateNode(node, [Identifier]);
-  const identifiers = identifierNodes.map((identifierNode) => query.substring(identifierNode.from, identifierNode.to));
-  return `| distinct ${identifiers.join(', ')}`;
 }
 
 export function formatDecolorizeExpr() {
