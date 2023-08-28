@@ -5,12 +5,10 @@ import {
   Selector,
   PipelineExpr,
   LineFilter,
-  LabelParser,
   JsonExpressionParser,
   LabelFilter,
   LineFormatExpr,
   LabelFormatExpr,
-  DistinctFilter,
   DecolorizeExpr,
   RangeAggregationExpr,
   LogRangeExpr,
@@ -30,7 +28,6 @@ import {
   formatLabelFilter,
   formatLineFormatExpr,
   formatLabelFormatExpr,
-  formatDistinctFilter,
   formatDecolorizeExpr,
 } from '../src/formatter/logs';
 import {
@@ -125,11 +122,6 @@ describe('formatLokiQuery', () => {
       expect(formatLokiQuery(`{label=""}|label_format label="",labelA=labelB`)).toBe(
         `{label=""}\n  | label_format label="", labelA=labelB`
       );
-    });
-
-    it('handles distinct filters', () => {
-      expect(formatLokiQuery(`{label=""}|distinct label`)).toBe(`{label=""}\n  | distinct label`);
-      expect(formatLokiQuery(`{label=""}|distinct labelA,labelB`)).toBe(`{label=""}\n  | distinct labelA, labelB`);
     });
 
     it('handles decolorize expressions', () => {
@@ -358,11 +350,6 @@ describe('log expression syntaxnode functions', () => {
     expect(formatLabelFormatExpr(MOCK_NODE, `{}|label_format label="",label=""`)).toBe(
       `| label_format label="", label=""`
     );
-  });
-
-  it('formatDistinctFilter should return formatted label format expr', () => {
-    const MOCK_NODE = generateMockNode(DistinctFilter, `{}|distinct label,label,label`);
-    expect(formatDistinctFilter(MOCK_NODE, `{}|distinct label,label,label`)).toBe(`| distinct label, label, label`);
   });
 
   it('formatDecolorizeExpr should return formatted label format expr', () => {
