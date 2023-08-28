@@ -36,8 +36,8 @@ import {
   Sub,
   LabelReplaceExpr,
   BinOpExpr,
-  LogExpr,
 } from '../parser.js';
+import { LogExpr } from '../parser.terms.js';
 
 export const formatMetricExpr = (node, query) => {
   const { addBrackets, newNode } = needsBrackets(node, MetricExpr);
