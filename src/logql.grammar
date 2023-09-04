@@ -43,7 +43,6 @@ PipelineStage {
   Pipe LabelFilter |
   Pipe LineFormatExpr |
   Pipe LabelFormatExpr |
-  Pipe DistinctFilter |
   Pipe DecolorizeExpr |
   Pipe DropLabelsExpr |
   Pipe KeepLabelsExpr
@@ -96,10 +95,6 @@ LogfmtParser {
 LogfmtExpressionParser {
   Logfmt LogfmtParserFlags LabelExtractionExpressionList |
   Logfmt LabelExtractionExpressionList
-}
-
-DistinctFilter {
-  Distinct DistinctLabel
 }
 
 LabelFilter {
@@ -161,11 +156,6 @@ LabelExtractionExpressionList {
 LogfmtParserFlags {
   ParserFlag |
   LogfmtParserFlags ParserFlag
-}
-
-DistinctLabel {
-  Identifier |
-  DistinctLabel !and "," Identifier
 }
 
 IpLabelFilter {
@@ -510,7 +500,6 @@ ConvOp {
   Ignoring,
   GroupLeft,
   GroupRight,
-  Distinct,
   Decolorize,
   Drop,
   Keep
