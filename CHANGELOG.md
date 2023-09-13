@@ -1,3 +1,7 @@
+# 0.1.0 / 2023-09-05
+
+- **[Chore]**: Upgrade version to `0.2.0`. Breaking changes: Logfmt now supports flags (--strict, --keep-empty) and arguments (labels), so Logfmt nodes are no longer `LabelParser` and will generate `LogfmtParser` and `LogfmtExpressionParser` nodes.
+
 # 0.1.0 / 2022-06-17
 
 - **[Chore]**: Upgrade version to `0.1.0` to indicate the breaking change in a previous version.

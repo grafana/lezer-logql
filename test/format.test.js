@@ -41,6 +41,7 @@ import {
   formatLabelReplaceExpr,
   formatVectorExpr,
 } from '../src/formatter/metrics';
+import { LogfmtParser } from '../src/parser.terms';
 
 describe('formatLokiQuery', () => {
   describe('LogExpr', () => {
@@ -326,7 +327,7 @@ describe('log expression syntaxnode functions', () => {
   });
 
   it('formatLabelParser should return a formatted label parser', () => {
-    const MOCK_NODE = generateMockNode(LabelParser, `{}|logfmt`);
+    const MOCK_NODE = generateMockNode(LogfmtParser, `{}|logfmt`);
     expect(formatLabelParser(MOCK_NODE, `{}|logfmt`)).toBe(`| logfmt`);
   });
 
