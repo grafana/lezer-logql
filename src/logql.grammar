@@ -324,7 +324,9 @@ VectorOp {
   Stddev |
   Stdvar |
   Bottomk |
-  Topk
+  Topk |
+  Sort |
+  Sort_Desc
 }
 
 
@@ -519,7 +521,9 @@ ConvOp {
   Stddev,
   Stdvar,
   Bottomk,
-  Topk
+  Topk,
+  Sort,
+  Sort_Desc
 }
 
 // Range operations
