@@ -1,4 +1,8 @@
-# 0.1.0 / 2023-09-05
+# 0.2.1 / 2023-10-17
+
+- **[Chore]**: Upgrade version to `0.2.1`. Added support for `sort()` and `sort_desc()`.
+
+# 0.2.0 / 2023-08-26
 
 - **[Chore]**: Upgrade version to `0.2.0`. Breaking changes: Logfmt now supports flags (--strict, --keep-empty) and arguments (labels), so Logfmt nodes are no longer `LabelParser` and will generate `LogfmtParser` and `LogfmtExpressionParser` nodes.
 
