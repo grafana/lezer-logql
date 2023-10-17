@@ -33,6 +33,8 @@ import {
   Decolorize,
   Drop,
   Keep,
+  Sort,
+  Sort_Desc,
 } from './parser.terms.js';
 
 const keywordTokens = {
@@ -77,6 +79,8 @@ const contextualKeywordTokens = {
   stdvar: Stdvar,
   bottomk: Bottomk,
   topk: Topk,
+  sort: Sort,
+  sort_desc: Sort_Desc,
 };
 
 export const extendIdentifier = (value) => {

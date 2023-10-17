@@ -477,3 +477,19 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 ==>
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, KeepLabelsExpr(Keep, KeepLabels(KeepLabels(KeepLabels(KeepLabel(Identifier)), KeepLabel(Identifier)), KeepLabel(Matcher(Identifier, Eq, String)))))))))
+
+# Sort
+
+sort(rate(({app=~"foo|bar"} |~".+bar")[1m])) without (app)  
+
+==> 
+
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sort), MetricExpr(RangeAggregationExpr(RangeOp(Rate), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Re, String))), PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeMatch), String)))), Range(Duration)))), Grouping(Without, Labels(Identifier))))))
+
+# Sort desc
+
+sort_desc(sum(count_over_time({namespace=~".+"}[1m])) by (namespace))
+
+==>
+
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sort_Desc), MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggregationExpr(RangeOp(CountOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Re, String))), Range(Duration)))), Grouping(By, Labels(Identifier))))))))
