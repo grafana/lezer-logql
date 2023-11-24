@@ -493,3 +493,19 @@ sort_desc(sum(count_over_time({namespace=~".+"}[1m])) by (namespace))
 ==>
 
 LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sort_Desc), MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggregationExpr(RangeOp(CountOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Re, String))), Range(Duration)))), Grouping(By, Labels(Identifier))))))))
+
+# Line filter with or in log query
+
+{app="foo"} |= "foo" or "test"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String, Or, OrFilter(String))))))))
+
+# Line filter with or in metric query
+
+count_over_time({app="foo"} |= "foo" or "test" [1m])
+
+==>
+
+LogQL(Expr(MetricExpr(RangeAggregationExpr(RangeOp(CountOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String, Or, OrFilter(String))))), Range(Duration))))))

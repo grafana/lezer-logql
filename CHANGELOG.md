@@ -1,3 +1,7 @@
+# 0.2.2 / 2023-11-24
+
+- **[Chore]**: Upgrade version to `0.2.2`. Added support for `or` in line filter expressions.
+
 # 0.2.1 / 2023-10-17
 
 - **[Chore]**: Upgrade version to `0.2.1`. Added support for `sort()` and `sort_desc()`.
