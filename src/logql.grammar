@@ -55,14 +55,22 @@ Matcher {
   Identifier !eql Nre String
 }
 
+OrFilter {
+  String |
+  FilterOp "(" String ")" |
+  String !or Or OrFilter
+}
+
 LineFilters {
-  LineFilter | 
+  LineFilter |
+  LineFilter !or Or OrFilter |
   LineFilters LineFilter
 }
 
 LineFilter {
   Filter String | 
-  Filter FilterOp "(" String ")"
+  Filter FilterOp "(" String ")" |
+  Filter String !or Or OrFilter
 }
 
 Filter {
