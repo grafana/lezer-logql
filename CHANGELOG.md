@@ -1,3 +1,7 @@
+# 0.2.3 / 2023-11-24
+
+- **[Chore]**: Upgrade version to `0.2.3`. Fix allowing using `ip` as label name and correctly parse query with it.
+
 # 0.2.2 / 2023-11-24
 
 - **[Chore]**: Upgrade version to `0.2.2`. Added support for `or` in line filter expressions.
