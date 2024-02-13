@@ -499,7 +499,6 @@ ConvOp {
   Pattern,
   Regexp,
   Unwrap,
-  Ip,
   LabelFormat,
   LineFormat,
   LabelReplace
@@ -556,6 +555,8 @@ BytesConv { condFn<"bytes"> }
 DurationConv { condFn<"duration"> }
 DurationSecondsConv { condFn<"duration_seconds"> }
 
+// Ip function
+Ip { condFn<"ip"> }
 
 // Conditional function names (only parsed as function names when used as such).
 condFn<term> { @extend<Identifier, term> }

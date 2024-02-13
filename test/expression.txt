@@ -536,3 +536,11 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 ==>
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt))), PipelineStage(Pipe, LabelFilter(IpLabelFilter(Identifier, Eq, Ip, String)))))))
+
+# Log query with ip label name
+
+{ip="123"} | logfmt | remote_addr = ip("2001:db8::1-2001:db8::8")
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt))), PipelineStage(Pipe, LabelFilter(IpLabelFilter(Identifier, Eq, Ip, String)))))))
