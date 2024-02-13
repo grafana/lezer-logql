@@ -509,3 +509,30 @@ count_over_time({app="foo"} |= "foo" or "test" [1m])
 ==>
 
 LogQL(Expr(MetricExpr(RangeAggregationExpr(RangeOp(CountOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String, Or, OrFilter(String))))), Range(Duration))))))
+
+# Log query with ip line filter
+
+{job_name="myapp"} |= ip("192.168.4.5/16")
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), FilterOp(Ip), String)))))))
+
+# Log query with ip filter
+
+{job_name="myapp"}
+	| logfmt
+	| addr = ip("192.168.4.5/16")
+	| addr != ip("192.168.4.2")
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt))), PipelineStage(Pipe, LabelFilter(IpLabelFilter(Identifier, Eq, Ip, String)))), PipelineStage(Pipe, LabelFilter(IpLabelFilter(Identifier, Neq, Ip, String)))))))
+
+# Log query with ip filter range
+
+{job="grafana"} | logfmt | remote_addr = ip("2001:db8::1-2001:db8::8")
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt))), PipelineStage(Pipe, LabelFilter(IpLabelFilter(Identifier, Eq, Ip, String)))))))
