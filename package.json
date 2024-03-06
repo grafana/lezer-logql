@@ -48,6 +48,7 @@
     "@lezer/lr": "^1.0.0"
   },
   "exports": {
+    "types": "./index.d.ts",
     "import": "./index.es.js",
     "require": "./index.cjs"
   },
