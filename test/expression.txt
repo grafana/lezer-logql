@@ -544,3 +544,11 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 ==>
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt))), PipelineStage(Pipe, LabelFilter(IpLabelFilter(Identifier, Eq, Ip, String)))))))
+
+# Log query with negative numbers
+
+{foo="bar"} | logfmt | counter>-1 | counter>=-1 | counter<-1 | counter<=-1 | counter!=-1 | counter==-1
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Gtr, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Gte, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Lss, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Lte, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Neq, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Eql, LiteralExpr(Sub, Number))))))))

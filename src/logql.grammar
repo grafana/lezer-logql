@@ -177,13 +177,13 @@ UnitFilter {
 }
 
 NumberFilter {
-  Identifier !eql Gtr Number |
-  Identifier !eql Gte Number |
-  Identifier !eql Lss Number |
-  Identifier !eql Lte Number |
-  Identifier !eql Neq Number |
-  Identifier !eql Eq Number |
-  Identifier !eql Eql Number
+  Identifier !eql Gtr LiteralExpr |
+  Identifier !eql Gte LiteralExpr |
+  Identifier !eql Lss LiteralExpr |
+  Identifier !eql Lte LiteralExpr |
+  Identifier !eql Neq LiteralExpr |
+  Identifier !eql Eq LiteralExpr |
+  Identifier !eql Eql LiteralExpr
 }
 
 LabelsFormat {

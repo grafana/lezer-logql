@@ -18,7 +18,6 @@ import {
   LiteralExpr,
   LabelReplaceExpr,
   VectorExpr,
-  LabelParser,
 } from '../src/parser';
 import {
   formatSelector,
