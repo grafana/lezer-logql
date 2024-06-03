@@ -1,3 +1,7 @@
+# 0.2.4 / 2023-06-03
+
+- **[Chore]**: Upgrade version to `0.2.4`. Added support for negative numbers.
+
 # 0.2.3 / 2023-11-24
 
 - **[Chore]**: Upgrade version to `0.2.3`. Fix allowing the use of `ip` as a label name and correctly parse queries with it.
