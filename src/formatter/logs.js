@@ -21,7 +21,7 @@ import {
   BytesFilter,
   Duration,
   Bytes,
-  Number,
+  LiteralExpr,
   LabelFormatMatcher,
   FilterOp,
   DecolorizeExpr,
@@ -241,7 +241,7 @@ export function formatLabelFilter(node, query) {
   } else if (selectedFilterType === BytesFilter) {
     valueNode = selectedFilter.getChild(Bytes);
   } else if (selectedFilterType === NumberFilter) {
-    valueNode = selectedFilter.getChild(Number);
+    valueNode = selectedFilter.getChild(LiteralExpr);
   } else {
     valueNode = selectedFilter.getChild(String);
   }
