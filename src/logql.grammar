@@ -76,6 +76,8 @@ LineFilter {
 Filter {
   !eql PipeExact |
   !eql PipeMatch |
+  !eql PipePattern |
+  !eql Npa |
   !eql Nre |
   !eql Neq
 }
@@ -484,6 +486,8 @@ ConvOp {
   Eql  { "==" }
   PipeExact { "|=" }
   PipeMatch { "|~" }
+  PipePattern { "|>" }
+  Npa { "!>" }
   Add { "+" }
   Mul { "*" }
   Mod { "%" }
