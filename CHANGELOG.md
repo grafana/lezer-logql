@@ -1,3 +1,7 @@
+# 0.2.6 / 2023-06-03
+
+- **[Chore]**: Upgrade version to `0.2.6`. Added support for pattern match/not-match line filters.
+
 # 0.2.4 / 2023-06-03
 
 - **[Chore]**: Upgrade version to `0.2.4`. Added support for negative numbers.
