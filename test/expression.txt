@@ -150,6 +150,21 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier,Eq,String))),PipelineExp
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(LineFilters(LineFilters(LineFilter(Filter(PipeExact), String)), LineFilter(Filter(Nre), String)))))))
 
+# Log query with pipe match pattern line filter
+
+{job="loki"} |> "hello"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipePattern), String)))))))
+
+# Log query with pipe not match pattern line filter
+
+{job="loki"} !> "hello"
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(Npa), String)))))))
 
 # Log query with logfmt parser
 
