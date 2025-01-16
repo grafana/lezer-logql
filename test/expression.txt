@@ -270,6 +270,14 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(Identifier, Gtr, Duration))), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Gtr, Bytes)))))))))
 
+# Log query with duration and bytes as floats
+
+{job="mysql"} | logfmt | duration > 1.5m and bytes_consumed > 20.2MB
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(Identifier, Gtr, Duration))), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Gtr, Bytes)))))))))
+
 # Complex log query with duration and bytes
 
 {job="mysql"} | logfmt | duration >= 20ms or (method="GET" and size <= 20KB)

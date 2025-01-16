@@ -1,3 +1,7 @@
+# 0.2.7 / 2025-01-16
+
+- **[Chore]**: Upgrade version to `0.2.7`. Added support for floats to be used in `Duration` and `Bytes`.
+- 
 # 0.2.6 / 2023-06-03
 
 - **[Chore]**: Upgrade version to `0.2.6`. Added support for pattern match/not-match line filters.

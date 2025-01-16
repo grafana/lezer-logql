@@ -409,6 +409,7 @@ ConvOp {
 
 @tokens {
   whitespace { std.whitespace+ }
+  float { std.digit+ ("." std.digit+)? }
   LineComment { "#" ![\n]* }
 
   String {
@@ -434,43 +435,43 @@ ConvOp {
   Duration {
     // Each line below is just the same regex repeated over and over, but each time with one of the units made non-optional,
     // to ensure that at least one <number>+<unit> pair is provided and an empty string is not recognized as a valid duration.
-    ( ( std.digit+ "y" ) ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
-    ( ( std.digit+ "y" )? ( std.digit+ "w" ) ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
-    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" ) ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
-    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" ) ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
-    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" ) ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
-    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" ) ( std.digit+ "ms" )? ) |
-    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" ) )
+    ( ( float "y" ) ( float "w" )? ( float "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ) |
+    ( ( float "y" )? ( float "w" ) ( float "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ) |
+    ( ( float "y" )? ( float "w" )? ( float "d" ) ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ) |
+    ( ( float "y" )? ( float "w" )? ( float "d" )? ( float "h" ) ( float "m" )? ( float "s" )? ( float "ms" )? ) |
+    ( ( float "y" )? ( float "w" )? ( float "d" )? ( float "h" )? ( float "m" ) ( float "s" )? ( float "ms" )? ) |
+    ( ( float "y" )? ( float "w" )? ( float "d" )? ( float "h" )? ( float "m" )? ( float "s" ) ( float "ms" )? ) |
+    ( ( float "y" )? ( float "w" )? ( float "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" ) )
   }
   
   @precedence { Duration, Bytes, Number }
 
   Bytes {
-    ( std.digit+ "b" ) |
-    ( std.digit+ "kib" ) |
-    ( std.digit+ "Kib" ) |
-    ( std.digit+ "kb" ) |
-    ( std.digit+ "KB" ) |
-    ( std.digit+ "mib" ) |
-    ( std.digit+ "Mib" ) |
-    ( std.digit+ "mb" ) |
-    ( std.digit+ "MB" ) |
-    ( std.digit+ "gib" ) |
-    ( std.digit+ "Gib" ) |
-    ( std.digit+ "gb" ) |
-    ( std.digit+ "GB" ) |
-    ( std.digit+ "tib" ) |
-    ( std.digit+ "Tib" ) |
-    ( std.digit+ "tb" ) |
-    ( std.digit+ "TB" ) |
-    ( std.digit+ "pib" ) |
-    ( std.digit+ "Pib" ) |
-    ( std.digit+ "pb" ) |
-    ( std.digit+ "PB" ) |
-    ( std.digit+ "eib" ) |
-    ( std.digit+ "Eib" ) |
-    ( std.digit+ "eb" ) |
-    ( std.digit+ "EB" ) 
+    ( float "b" ) |
+    ( float "kib" ) |
+    ( float "Kib" ) |
+    ( float "kb" ) |
+    ( float "KB" ) |
+    ( float "mib" ) |
+    ( float "Mib" ) |
+    ( float "mb" ) |
+    ( float "MB" ) |
+    ( float "gib" ) |
+    ( float "Gib" ) |
+    ( float "gb" ) |
+    ( float "GB" ) |
+    ( float "tib" ) |
+    ( float "Tib" ) |
+    ( float "tb" ) |
+    ( float "TB" ) |
+    ( float "pib" ) |
+    ( float "Pib" ) |
+    ( float "pb" ) |
+    ( float "PB" ) |
+    ( float "eib" ) |
+    ( float "Eib" ) |
+    ( float "eb" ) |
+    ( float "EB" ) 
   }
 
   // Operator
