@@ -409,6 +409,8 @@ ConvOp {
 
 @tokens {
   whitespace { std.whitespace+ }
+  int { std.digit+ }
+  float { std.digit+ ("." std.digit+)? }
   LineComment { "#" ![\n]* }
 
   String {
@@ -430,47 +432,39 @@ ConvOp {
   }
 
     LabelName { (std.asciiLetter | "_") (std.asciiLetter | std.digit | "_")* }
-  
   Duration {
     // Each line below is just the same regex repeated over and over, but each time with one of the units made non-optional,
     // to ensure that at least one <number>+<unit> pair is provided and an empty string is not recognized as a valid duration.
-    ( ( std.digit+ "y" ) ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
-    ( ( std.digit+ "y" )? ( std.digit+ "w" ) ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
-    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" ) ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
-    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" ) ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
-    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" ) ( std.digit+ "s" )? ( std.digit+ "ms" )? ) |
-    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" ) ( std.digit+ "ms" )? ) |
-    ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" ) )
+    Sub? (
+      ( ( int "y" ) ( int "w" )? ( int "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" ) ( int "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" ) ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" )? ( float "h" ) ( float "m" )? ( float "s" )? ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" )? ( float "h" )? ( float "m" ) ( float "s" )? ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" )? ( float "h" )? ( float "m" )? ( float "s" ) ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" ) ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ( float "µs" | float "us" ) ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" ) ) 
+    )
   }
   
   @precedence { Duration, Bytes, Number }
 
+  // only accept `B, kB, MB, GB, TB, PB, KB, KiB, MiB, GiB, TiB, PiB`
+  // https://github.com/grafana/loki/blob/main/pkg/logql/syntax/lex.go#L382
   Bytes {
-    ( std.digit+ "b" ) |
-    ( std.digit+ "kib" ) |
-    ( std.digit+ "Kib" ) |
-    ( std.digit+ "kb" ) |
-    ( std.digit+ "KB" ) |
-    ( std.digit+ "mib" ) |
-    ( std.digit+ "Mib" ) |
-    ( std.digit+ "mb" ) |
-    ( std.digit+ "MB" ) |
-    ( std.digit+ "gib" ) |
-    ( std.digit+ "Gib" ) |
-    ( std.digit+ "gb" ) |
-    ( std.digit+ "GB" ) |
-    ( std.digit+ "tib" ) |
-    ( std.digit+ "Tib" ) |
-    ( std.digit+ "tb" ) |
-    ( std.digit+ "TB" ) |
-    ( std.digit+ "pib" ) |
-    ( std.digit+ "Pib" ) |
-    ( std.digit+ "pb" ) |
-    ( std.digit+ "PB" ) |
-    ( std.digit+ "eib" ) |
-    ( std.digit+ "Eib" ) |
-    ( std.digit+ "eb" ) |
-    ( std.digit+ "EB" ) 
+    ( float "B" ) |   
+    ( float "KB" ) |
+    ( float "KiB" ) |
+    ( float "kB" ) |
+    ( float "MB" ) |
+    ( float "GB" ) |
+    ( float "TB" ) |
+    ( float "PB" ) |
+    ( float "MiB" ) |
+    ( float "GiB" ) |
+    ( float "TiB" ) |
+    ( float "PiB" )
   }
 
   // Operator

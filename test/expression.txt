@@ -270,6 +270,14 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(Identifier, Gtr, Duration))), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Gtr, Bytes)))))))))
 
+# Log query with duration and bytes as floats
+
+{job="mysql"} | logfmt | duration > 1.5m and bytes_consumed > 20.2MB
+
+==>
+
+LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt))), PipelineStage(Pipe, LabelFilter(LabelFilter(UnitFilter(DurationFilter(Identifier, Gtr, Duration))), And, LabelFilter(UnitFilter(BytesFilter(Identifier, Gtr, Bytes)))))))))
+
 # Complex log query with duration and bytes
 
 {job="mysql"} | logfmt | duration >= 20ms or (method="GET" and size <= 20KB)
@@ -567,3 +575,83 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 ==>
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Gtr, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Gte, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Lss, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Lte, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Neq, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Eql, LiteralExpr(Sub, Number))))))))
+
+# 5y2w3d4h5m6s succeeds
+
+5y2w3d4h5m6s
+
+==>
+
+LogQL(⚠(Duration))
+
+# 2w3y errors because week before year
+
+2w3y
+
+==>
+
+LogQL(⚠(Duration), ⚠(Duration))
+
+# 5.5y
+
+5.5y
+
+==>
+
+LogQL(Expr(MetricExpr(LiteralExpr(Number))), ⚠(Identifier))
+
+# 2.5h
+
+2.5h
+
+==>
+
+LogQL(⚠(Duration))
+
+# -2.5h
+
+-2.5h
+
+==>
+
+LogQL(⚠(Duration))
+
+# 20KB
+
+20KB
+
+==>
+
+LogQL(⚠(Bytes))
+
+# 20kb does parse as Bytes
+
+20kb
+
+==>
+
+LogQL(Expr(MetricExpr(LiteralExpr(Number))), ⚠(Identifier))
+
+# 20MB
+
+20MB
+
+==>
+
+LogQL(⚠(Bytes))
+
+# 20.5MB
+
+20.5MB 
+
+==>
+
+LogQL(⚠(Bytes))
+
+# -20.5MB
+
+-20.5MB 
+
+==>
+
+LogQL(Expr(MetricExpr(LiteralExpr(Sub, ⚠(Bytes)))))

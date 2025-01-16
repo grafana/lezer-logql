@@ -1,6 +1,6 @@
 {
   "name": "@grafana/lezer-logql",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Grafana Loki logQL lezer grammar",
   "main": "index.cjs",
   "type": "module",
@@ -16,7 +16,8 @@
     "build": "bash ./build.sh",
     "test": "jest",
     "build:test": "npm run build && npm run test",
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "local": "python3 -m http.server & SERVER_PID=$! && trap 'kill $SERVER_PID' INT && open http://localhost:8000/tools/tree-viz.local.html && wait $SERVER_PID"
   },
   "devDependencies": {
     "@babel/core": "^7.22.8",
