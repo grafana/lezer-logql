@@ -409,6 +409,7 @@ ConvOp {
 
 @tokens {
   whitespace { std.whitespace+ }
+  int { std.digit+ }
   float { std.digit+ ("." std.digit+)? }
   LineComment { "#" ![\n]* }
 
@@ -431,17 +432,20 @@ ConvOp {
   }
 
     LabelName { (std.asciiLetter | "_") (std.asciiLetter | std.digit | "_")* }
-  
   Duration {
     // Each line below is just the same regex repeated over and over, but each time with one of the units made non-optional,
     // to ensure that at least one <number>+<unit> pair is provided and an empty string is not recognized as a valid duration.
-    ( ( float "y" ) ( float "w" )? ( float "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ) |
-    ( ( float "y" )? ( float "w" ) ( float "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ) |
-    ( ( float "y" )? ( float "w" )? ( float "d" ) ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ) |
-    ( ( float "y" )? ( float "w" )? ( float "d" )? ( float "h" ) ( float "m" )? ( float "s" )? ( float "ms" )? ) |
-    ( ( float "y" )? ( float "w" )? ( float "d" )? ( float "h" )? ( float "m" ) ( float "s" )? ( float "ms" )? ) |
-    ( ( float "y" )? ( float "w" )? ( float "d" )? ( float "h" )? ( float "m" )? ( float "s" ) ( float "ms" )? ) |
-    ( ( float "y" )? ( float "w" )? ( float "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" ) )
+    Sub? (
+      ( ( int "y" ) ( int "w" )? ( int "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" ) ( int "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" ) ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" )? ( float "h" ) ( float "m" )? ( float "s" )? ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" )? ( float "h" )? ( float "m" ) ( float "s" )? ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" )? ( float "h" )? ( float "m" )? ( float "s" ) ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" ) ( float "µs" | float "us" )? ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ( float "µs" | float "us" ) ( float "ns" )? ) |
+      ( ( int "y" )? ( int "w" )? ( int "d" )? ( float "h" )? ( float "m" )? ( float "s" )? ( float "ms" )? ( float "µs" | float "us" )? ( float "ns" ) ) 
+    )
   }
   
   @precedence { Duration, Bytes, Number }

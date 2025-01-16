@@ -575,3 +575,43 @@ LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Pipeline
 ==>
 
 LogQL(Expr(LogExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineExpr(PipelineStage(Pipe, LogfmtParser(Logfmt))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Gtr, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Gte, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Lss, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Lte, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Neq, LiteralExpr(Sub, Number))))), PipelineStage(Pipe, LabelFilter(NumberFilter(Identifier, Eql, LiteralExpr(Sub, Number))))))))
+
+# 5y2w3d4h5m6s succeeds
+
+5y2w3d4h5m6s
+
+==>
+
+LogQL(⚠(Duration))
+
+# 2w3y errors because week before year
+
+2w3y
+
+==>
+
+LogQL(⚠(Duration), ⚠(Duration))
+
+# 5.5y
+
+5.5y
+
+==>
+
+LogQL(Expr(MetricExpr(LiteralExpr(Number))), ⚠(Identifier))
+
+# 2.5h
+
+2.5h
+
+==>
+
+LogQL(⚠(Duration))
+
+# -2.5h
+
+-2.5h
+
+==>
+
+LogQL(⚠(Duration))
