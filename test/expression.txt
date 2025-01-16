@@ -615,3 +615,43 @@ LogQL(⚠(Duration))
 ==>
 
 LogQL(⚠(Duration))
+
+# 20KB
+
+20KB
+
+==>
+
+LogQL(⚠(Bytes))
+
+# 20kb does parse as Bytes
+
+20kb
+
+==>
+
+LogQL(Expr(MetricExpr(LiteralExpr(Number))), ⚠(Identifier))
+
+# 20MB
+
+20MB
+
+==>
+
+LogQL(⚠(Bytes))
+
+# 20.5MB
+
+20.5MB 
+
+==>
+
+LogQL(⚠(Bytes))
+
+# -20.5MB
+
+-20.5MB 
+
+==>
+
+LogQL(Expr(MetricExpr(LiteralExpr(Sub, ⚠(Bytes)))))

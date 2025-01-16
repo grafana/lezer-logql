@@ -450,32 +450,21 @@ ConvOp {
   
   @precedence { Duration, Bytes, Number }
 
+  // only accept `B, kB, MB, GB, TB, PB, KB, KiB, MiB, GiB, TiB, PiB`
+  // https://github.com/grafana/loki/blob/main/pkg/logql/syntax/lex.go#L382
   Bytes {
-    ( float "b" ) |
-    ( float "kib" ) |
-    ( float "Kib" ) |
-    ( float "kb" ) |
+    ( float "B" ) |   
     ( float "KB" ) |
-    ( float "mib" ) |
-    ( float "Mib" ) |
-    ( float "mb" ) |
+    ( float "KiB" ) |
+    ( float "kB" ) |
     ( float "MB" ) |
-    ( float "gib" ) |
-    ( float "Gib" ) |
-    ( float "gb" ) |
     ( float "GB" ) |
-    ( float "tib" ) |
-    ( float "Tib" ) |
-    ( float "tb" ) |
     ( float "TB" ) |
-    ( float "pib" ) |
-    ( float "Pib" ) |
-    ( float "pb" ) |
     ( float "PB" ) |
-    ( float "eib" ) |
-    ( float "Eib" ) |
-    ( float "eb" ) |
-    ( float "EB" ) 
+    ( float "MiB" ) |
+    ( float "GiB" ) |
+    ( float "TiB" ) |
+    ( float "PiB" )
   }
 
   // Operator
