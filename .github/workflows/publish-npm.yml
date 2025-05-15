@@ -5,8 +5,10 @@ on:
       - main
       - v0.0.x
 
+# These permissions are needed to assume roles from Github's OIDC.
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   publish:
@@ -15,9 +17,10 @@ jobs:
     steps:
       - name: Get secrets
         id: get-secrets
-        uses: grafana/shared-workflows/actions/get-vault-secrets@28361cdb22223e5f1e34358c86c20908e7248760
+        uses: grafana/shared-workflows/actions/get-vault-secrets@get-vault-secrets-v1.2.0
         with:
           # ci/repo/grafana/<repo> automatically in the path and can be omitted
+          # Secrets placed in the ci/repo/grafana/<repo>/<path> path in Vault
           repo_secrets: |
             NPM_TOKEN=secrets:NPM_TOKEN
 
@@ -62,4 +65,4 @@ jobs:
         if: steps.version_check.outputs.changed == 'true'
         run: npm publish ./dist --access public
         env:
-          NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
+          NODE_AUTH_TOKEN:  "${NPM_TOKEN}"
