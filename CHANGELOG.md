@@ -1,6 +1,6 @@
 # 0.2.8 / 2025-07-08
 
-- **[Chore]**: Upgrade version to `0.2.8`. Update dependencies.
+- **[Chore]**: Upgrade version to `0.2.8`. Update frontend dependencies.
 
 # 0.2.7 / 2025-01-16
 
