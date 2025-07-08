@@ -1,3 +1,7 @@
+# 0.2.8 / 2025-07-08
+
+- **[Chore]**: Upgrade version to `0.2.8`. Update dependencies.
+
 # 0.2.7 / 2025-01-16
 
 - **[Chore]**: Upgrade version to `0.2.7`. Added support for floats to be used in `Duration` and `Bytes`.
