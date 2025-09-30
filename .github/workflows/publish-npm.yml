@@ -15,15 +15,6 @@ jobs:
     name: Publish to NPM Package Registry
     runs-on: ubuntu-latest
     steps:
-      - name: Get secrets
-        id: get-secrets
-        uses: grafana/shared-workflows/actions/get-vault-secrets@get-vault-secrets-v1.2.0
-        with:
-          # ci/repo/grafana/<repo> automatically in the path and can be omitted
-          # Secrets placed in the ci/repo/grafana/<repo>/<path> path in Vault
-          repo_secrets: |
-            NPM_TOKEN=secrets:NPM_TOKEN
-
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
@@ -48,14 +39,15 @@ jobs:
 
       - name: Setup .npmrc file for NPM registry
         if: steps.version_check.outputs.changed == 'true'
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: '14'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: '20'
+          scope: '@grafana'
+          registry-url: 'https://registry.npmjs.org' 
 
-      - name: Install dependencies
+      - name: Install dependencies # use npm@latest for Trusted Publishing
         if: steps.version_check.outputs.changed == 'true'
-        run: npm install --ignore-scripts
+        run: npm install -g npm@latest && npm install --ignore-scripts
 
       - name: Build library
         if: steps.version_check.outputs.changed == 'true'
@@ -64,5 +56,3 @@ jobs:
       - name: Publish package to NPM
         if: steps.version_check.outputs.changed == 'true'
         run: npm publish ./dist --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
