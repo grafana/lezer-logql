@@ -24,7 +24,7 @@
     "@babel/preset-env": "7.28.0",
     "@lezer/generator": "1.0.0",
     "@lezer/lr": "1.0.0",
-    "@rollup/plugin-commonjs": "28.0.0",
+    "@rollup/plugin-commonjs": "28.0.9",
     "@rollup/plugin-multi-entry": "6.0.1",
     "@rollup/plugin-node-resolve": "15.3.0",
     "babel-jest": "29.6.1",
