@@ -22,7 +22,7 @@
   "devDependencies": {
     "@babel/core": "7.28.0",
     "@babel/preset-env": "7.28.0",
-    "@lezer/generator": "1.0.0",
+    "@lezer/generator": "1.8.0",
     "@lezer/lr": "1.0.0",
     "@rollup/plugin-commonjs": "25.0.2",
     "@rollup/plugin-multi-entry": "6.0.0",
