@@ -5,7 +5,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { describe, it } from '@jest/globals';
 
-let caseDir = path.dirname(__filename);
+// __dirname is available after Babel transforms ESM to CommonJS
+// eslint-disable-next-line no-undef
+const caseDir = __dirname;
 for (const file of fs.readdirSync(caseDir)) {
   if (!/\.txt$/.test(file)) continue;
 
