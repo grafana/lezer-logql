@@ -23,7 +23,7 @@ jobs:
       # limit releases to version changes - https://github.com/EndBug/version-check
       # EndBug/version-check@v1 as of Oct 8, 2020
       - name: Check version changes
-        uses: EndBug/version-check@a4db3dc8368cb5e052fd2976b5984ca9ef69fa25
+        uses: EndBug/version-check@75936fdb6cc2b3d6a95c4283dd534402f74b0347
         id: version_check
         with:
           # diff the commits rather than commit message for version changes
