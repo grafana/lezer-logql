@@ -23,7 +23,7 @@
     "@babel/core": "7.29.0",
     "@babel/preset-env": "7.29.0",
     "@lezer/generator": "1.8.0",
-    "@lezer/lr": "1.4.7",
+    "@lezer/lr": "1.4.8",
     "@rollup/plugin-commonjs": "29.0.0",
     "@rollup/plugin-multi-entry": "7.1.0",
     "@rollup/plugin-node-resolve": "16.0.3",
