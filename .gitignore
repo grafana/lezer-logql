@@ -4,3 +4,4 @@
 .tern-*
 /dist/
 notes.txt
+.DS_Store
