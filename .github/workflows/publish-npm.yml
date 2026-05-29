@@ -6,12 +6,12 @@ on:
       - v0.0.x
 
 # These permissions are needed to assume roles from Github's OIDC.
-permissions:
-  contents: read
-  id-token: write
 
 jobs:
   publish:
+    permissions:
+      contents: read
+      id-token: write
     name: Publish to NPM Package Registry
     runs-on: ubuntu-latest
     steps:
