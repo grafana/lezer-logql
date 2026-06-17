@@ -30,7 +30,7 @@
     "babel-jest": "30.4.1",
     "eslint": "10.3.0",
     "jest": "30.4.2",
-    "lint-staged": "16.4.0",
+    "lint-staged": "17.0.7",
     "prettier": "3.8.3",
     "rollup": "4.60.3",
     "rollup-plugin-combine": "2.1.1",
