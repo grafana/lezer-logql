@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - v0.0.x
 
 # These permissions are needed to assume roles from Github's OIDC.
 
