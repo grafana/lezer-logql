@@ -4,7 +4,7 @@ import combine from 'rollup-plugin-combine';
 import commonjs from '@rollup/plugin-commonjs';
 
 export default {
-  input: ['src/parser.js'],
+  input: ['src/parser.js', 'src/highlight.js'],
   output: [
     {
       format: 'cjs',

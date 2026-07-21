@@ -29,5 +29,32 @@ import { LRParser } from '@lezer/lr'
 export const parser: LRParser
 $(sed -E 's/ = [0-9]+/: number/' src/parser.terms.js)
 
-export const formatLokiQuery: (query: string) => string
+export interface QueryCompletionItem {
+  label: string
+  insertText?: string
+  detail?: string
+  documentation?: string
+  move?: number
+}
+
+export const AGGREGATION_OPERATORS: QueryCompletionItem[]
+export const RANGE_VEC_FUNCTIONS: QueryCompletionItem[]
+export const BUILT_IN_FUNCTIONS: QueryCompletionItem[]
+export const FUNCTIONS: QueryCompletionItem[]
+
+export type HighlightToken =
+  | RegExp
+  | {
+      pattern: RegExp
+      lookbehind?: boolean
+      greedy?: boolean
+      alias?: string
+      inside?: HighlightGrammar
+    }
+
+export type HighlightGrammar = {
+  [name: string]: HighlightToken | HighlightToken[]
+}
+
+export const lokiGrammar: HighlightGrammar
 EOF
