@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.4.0 / 2026-07-21
+
+- **[Feat]**: Add lokiGrammar typescript types.
+- **[Chore]**: Remove previously removed formatLokiQuery function.
+
 ## 0.3.1 / 2026-07-10
 
 - **[Chore]**: Upgrade version to `0.3.1`. Update dependencies.
