@@ -517,6 +517,14 @@ sort_desc(sum(count_over_time({namespace=~".+"}[1m])) by (namespace))
 
 LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Sort_Desc), MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggregationExpr(RangeOp(CountOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Re, String))), Range(Duration)))), Grouping(By, Labels(Identifier))))))))
 
+# Approx TOPK
+
+approx_topk(10, sum(count_over_time({foo="bar"}[1m])) by (value))
+
+==>
+
+LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Approx_Topk), Number, MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggregationExpr(RangeOp(CountOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Range(Duration)))), Grouping(By, Labels(Identifier))))))))
+
 # Line filter with or in log query
 
 {app="foo"} |= "foo" or "test"
