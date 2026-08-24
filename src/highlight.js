@@ -44,6 +44,11 @@ export const AGGREGATION_OPERATORS = [
     insertText: 'topk',
     documentation: 'Largest k elements by sample value',
   },
+  {
+    label: 'approx_topk',
+    insertText: 'approx_topk',
+    documentation: 'Probabilistic approximation of topk',
+  },
 ];
 
 const PIPE_PARSERS = [
