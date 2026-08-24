@@ -336,7 +336,8 @@ VectorOp {
   Bottomk |
   Topk |
   Sort |
-  Sort_Desc
+  Sort_Desc |
+  Approx_Topk
 }
 
 
@@ -528,7 +529,8 @@ ConvOp {
   Bottomk,
   Topk,
   Sort,
-  Sort_Desc
+  Sort_Desc,
+  Approx_Topk
 }
 
 // Range operations

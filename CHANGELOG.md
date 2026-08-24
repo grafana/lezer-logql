@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.4.1 / 2026-08-24
+
+- **[Feat]**: Add Approx_Topk() support.
+
 ## 0.4.0 / 2026-07-21
 
 - **[Feat]**: Add lokiGrammar typescript types.

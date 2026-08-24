@@ -34,6 +34,7 @@ import {
   Keep,
   Sort,
   Sort_Desc,
+  Approx_Topk,
 } from './parser.terms.js';
 
 const keywordTokens = {
@@ -79,6 +80,7 @@ const contextualKeywordTokens = {
   topk: Topk,
   sort: Sort,
   sort_desc: Sort_Desc,
+  approx_topk: Approx_Topk,
 };
 
 export const extendIdentifier = (value) => {
