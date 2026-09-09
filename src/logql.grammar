@@ -227,6 +227,7 @@ BytesFilter {
 MetricExpr {
   RangeAggregationExpr |
   VectorAggregationExpr |
+  LabelAggregationExpr |
   BinOpExpr |
   LiteralExpr |
   LabelReplaceExpr |
@@ -248,6 +249,11 @@ VectorAggregationExpr {
   VectorOp "(" Number "," MetricExpr ")" |
   VectorOp "(" Number "," MetricExpr ")" Grouping |
   VectorOp Grouping "(" Number "," MetricExpr ")"
+}
+
+LabelAggregationExpr {
+  LabelAggOp "(" Identifier "," LogRangeExpr ")" |
+  LabelAggOp "(" Identifier "," LogRangeExpr ")" Grouping
 }
 
 BinOpExpr {
@@ -340,6 +346,9 @@ VectorOp {
   Approx_Topk
 }
 
+LabelAggOp {
+  ApproxCountDistinct
+}
 
 Grouping {
   By "(" Labels ")" |
@@ -557,6 +566,9 @@ DurationSecondsConv { condFn<"duration_seconds"> }
 
 // Ip function
 Ip { condFn<"ip"> }
+
+// Label aggregation operations
+ApproxCountDistinct { condFn<"approx_count_distinct"> }
 
 // Conditional function names (only parsed as function names when used as such).
 condFn<term> { @extend<Identifier, term> }
