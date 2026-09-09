@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.4.2 / 2026-09-09
+
+- **[Feat]**: Add approx_count_distinct() support.
+
 ## 0.4.1 / 2026-08-24
 
 - **[Feat]**: Add Approx_Topk() support.
