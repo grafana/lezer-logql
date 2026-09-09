@@ -49,6 +49,11 @@ export const AGGREGATION_OPERATORS = [
     insertText: 'approx_topk',
     documentation: 'Probabilistic approximation of topk',
   },
+  {
+    label: 'approx_count_distinct',
+    insertText: 'approx_count_distinct',
+    documentation: 'Probabilistic count of distinct label values',
+  },
 ];
 
 const PIPE_PARSERS = [
