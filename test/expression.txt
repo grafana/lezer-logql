@@ -525,6 +525,22 @@ approx_topk(10, sum(count_over_time({foo="bar"}[1m])) by (value))
 
 LogQL(Expr(MetricExpr(VectorAggregationExpr(VectorOp(Approx_Topk), Number, MetricExpr(VectorAggregationExpr(VectorOp(Sum), MetricExpr(RangeAggregationExpr(RangeOp(CountOverTime), LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), Range(Duration)))), Grouping(By, Labels(Identifier))))))))
 
+# Approx count distinct
+
+approx_count_distinct(mac_address, {job="devices"} | json [1d]) by (version)
+
+==>
+
+LogQL(Expr(MetricExpr(LabelAggregationExpr(LabelAggOp(ApproxCountDistinct), Identifier, LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineStage(Pipe, LabelParser(Json))), Range(Duration)), Grouping(By, Labels(Identifier))))))
+
+# Approx count distinct without grouping
+
+approx_count_distinct(user_id, {app="api"} |= "login" | logfmt [1h])
+
+==>
+
+LogQL(Expr(MetricExpr(LabelAggregationExpr(LabelAggOp(ApproxCountDistinct), Identifier, LogRangeExpr(Selector(Matchers(Matcher(Identifier, Eq, String))), PipelineExpr(PipelineExpr(PipelineStage(LineFilters(LineFilter(Filter(PipeExact), String)))), PipelineStage(Pipe, LogfmtParser(Logfmt))), Range(Duration))))))
+
 # Line filter with or in log query
 
 {app="foo"} |= "foo" or "test"
