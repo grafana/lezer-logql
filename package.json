@@ -20,19 +20,19 @@
     "local": "python3 -m http.server & SERVER_PID=$! && trap 'kill $SERVER_PID' INT && open http://localhost:8000/tools/tree-viz.local.html && wait $SERVER_PID"
   },
   "devDependencies": {
-    "@babel/core": "8.0.6",
-    "@babel/preset-env": "8.0.6",
-    "@lezer/generator": "1.8.0",
-    "@lezer/lr": "1.4.10",
+    "@babel/core": "8.0.7",
+    "@babel/preset-env": "8.0.7",
+    "@lezer/generator": "1.8.1",
+    "@lezer/lr": "1.4.11",
     "@rollup/plugin-commonjs": "29.0.3",
     "@rollup/plugin-multi-entry": "7.1.0",
     "@rollup/plugin-node-resolve": "16.0.3",
     "babel-jest": "30.5.2",
-    "eslint": "10.11.0",
+    "eslint": "10.13.0",
     "jest": "30.5.2",
-    "lint-staged": "17.5.1",
-    "prettier": "3.9.8",
-    "rollup": "4.63.4",
+    "lint-staged": "17.6.0",
+    "prettier": "3.9.10",
+    "rollup": "4.64.8",
     "rollup-plugin-combine": "2.1.1",
     "rollup-plugin-match": "1.0.0"
   },
@@ -46,7 +46,7 @@
     ]
   },
   "peerDependencies": {
-    "@lezer/lr": "1.4.10"
+    "@lezer/lr": "1.4.11"
   },
   "exports": {
     "types": "./index.d.ts",
@@ -63,7 +63,7 @@
     "index.es.js",
     "package.json"
   ],
-  "packageManager": "npm@12.0.2",
+  "packageManager": "npm@12.2.0",
   "engines": {
     "node": ">=24",
     "npm": ">=11.12.1"
