@@ -32,7 +32,7 @@
     "jest": "30.5.2",
     "lint-staged": "17.6.0",
     "prettier": "3.9.10",
-    "rollup": "4.64.12",
+    "rollup": "4.65.0",
     "rollup-plugin-combine": "2.1.1",
     "rollup-plugin-match": "1.0.0"
   },
