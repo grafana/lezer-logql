@@ -20,7 +20,7 @@
     "local": "python3 -m http.server & SERVER_PID=$! && trap 'kill $SERVER_PID' INT && open http://localhost:8000/tools/tree-viz.local.html && wait $SERVER_PID"
   },
   "devDependencies": {
-    "@babel/core": "8.0.7",
+    "@babel/core": "8.0.9",
     "@babel/preset-env": "8.0.7",
     "@lezer/generator": "1.8.1",
     "@lezer/lr": "1.4.11",
@@ -32,7 +32,7 @@
     "jest": "30.5.2",
     "lint-staged": "17.6.0",
     "prettier": "3.9.10",
-    "rollup": "4.65.0",
+    "rollup": "4.66.0",
     "rollup-plugin-combine": "2.1.1",
     "rollup-plugin-match": "1.0.0"
   },
