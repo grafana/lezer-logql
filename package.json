@@ -23,7 +23,7 @@
     "@babel/core": "8.1.3",
     "@babel/preset-env": "8.0.7",
     "@lezer/generator": "1.8.1",
-    "@lezer/lr": "1.4.12",
+    "@lezer/lr": "1.4.13",
     "@rollup/plugin-commonjs": "29.0.3",
     "@rollup/plugin-multi-entry": "7.1.0",
     "@rollup/plugin-node-resolve": "16.0.3",
@@ -46,7 +46,7 @@
     ]
   },
   "peerDependencies": {
-    "@lezer/lr": "1.4.12"
+    "@lezer/lr": "1.4.13"
   },
   "exports": {
     "types": "./index.d.ts",
